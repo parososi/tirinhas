@@ -6,7 +6,8 @@
       "data": "2026-03-01",
       "comentario": "Esta é a primeira tirinha da série. Tudo começa com uma ideia simples.",
       "imagem": "tirinhas/placeholder.svg",
-      "alt": "Tirinha de exemplo com três painéis mostrando um personagem em ação"
+      "alt": "Tirinha de exemplo com três painéis mostrando um personagem em ação",
+      "hashtags": ["#ze"]
     },
     {
       "id": 2,
@@ -14,7 +15,8 @@
       "data": "2026-03-03",
       "comentario": "",
       "imagem": "tirinhas/placeholder.svg",
-      "alt": "Tirinha de exemplo com três painéis"
+      "alt": "Tirinha de exemplo com três painéis",
+      "hashtags": ["#ze", "#vizinha"]
     },
     {
       "id": 3,
@@ -22,7 +24,8 @@
       "data": "2026-03-05",
       "comentario": "Às vezes as maiores descobertas acontecem nos menores momentos.",
       "imagem": "tirinhas/placeholder.svg",
-      "alt": "Tirinha de exemplo mostrando uma descoberta surpreendente"
+      "alt": "Tirinha de exemplo mostrando uma descoberta surpreendente",
+      "hashtags": ["#ze", "#chefe"]
     },
     {
       "id": 4,
@@ -30,7 +33,8 @@
       "data": "2026-03-07",
       "comentario": "",
       "imagem": "tirinhas/placeholder.svg",
-      "alt": "Tirinha de exemplo em uma tarde ensolarada"
+      "alt": "Tirinha de exemplo em uma tarde ensolarada",
+      "hashtags": ["#ze", "#tulipa"]
     },
     {
       "id": 5,
@@ -38,7 +42,8 @@
       "data": "2026-03-10",
       "comentario": "Desenhei essa tirinha pensando naquelas perguntas que ficam na cabeça por dias.",
       "imagem": "tirinhas/placeholder.svg",
-      "alt": "Tirinha de exemplo com três painéis sobre uma questão filosófica"
+      "alt": "Tirinha de exemplo com três painéis sobre uma questão filosófica",
+      "hashtags": ["#ze", "#vizinha", "#humor"]
     },
     {
       "id": 6,
@@ -46,7 +51,8 @@
       "data": "2026-03-12",
       "comentario": "",
       "imagem": "tirinhas/placeholder.svg",
-      "alt": "Tirinha mais recente"
+      "alt": "Tirinha mais recente",
+      "hashtags": ["#ze", "#tulipa"]
     }
   ],
   "personagens": [
@@ -57,7 +63,8 @@
       "descricao": "Homem comum, de bom coração e cabeça quente. Tem sempre uma ideia nova — e quase sempre a executa do jeito errado. No fundo, aprende com tudo.",
       "caracteristicas": ["Otimista", "Atrapalhado", "Bem-intencionado", "Teimoso"],
       "primeira_aparicao": 1,
-      "imagem": "tirinhas/placeholder.svg"
+      "imagem": "tirinhas/placeholder.svg",
+      "hashtag": "#ze"
     },
     {
       "id": 2,
@@ -66,7 +73,8 @@
       "descricao": "Mora ao lado do Zé há décadas. Viu de tudo e já não se surpreende com nada. Sua sabedoria vem menos dos livros e mais das janelas que olhou durante anos.",
       "caracteristicas": ["Sábia", "Direta", "Observadora", "Irônica"],
       "primeira_aparicao": 2,
-      "imagem": "tirinhas/placeholder.svg"
+      "imagem": "tirinhas/placeholder.svg",
+      "hashtag": "#vizinha"
     },
     {
       "id": 3,
@@ -75,7 +83,8 @@
       "descricao": "Ocupa a cadeira de chefia há muito tempo, mas ninguém sabe bem como chegou lá. Faz reuniões longas, dá ordens contraditórias e acredita que está sempre certo.",
       "caracteristicas": ["Autoritário", "Confuso", "Pomposo", "Inseguro"],
       "primeira_aparicao": 3,
-      "imagem": "tirinhas/placeholder.svg"
+      "imagem": "tirinhas/placeholder.svg",
+      "hashtag": "#chefe"
     },
     {
       "id": 4,
@@ -84,7 +93,8 @@
       "descricao": "Amiga de longa data do Zé. Prática e sem rodeios, tem o dom de resolver em dois minutos os problemas que Zé cria em horas. Coleciona soluções simples para problemas complicados.",
       "caracteristicas": ["Prática", "Leal", "Perspicaz", "Impaciente"],
       "primeira_aparicao": 4,
-      "imagem": "tirinhas/placeholder.svg"
+      "imagem": "tirinhas/placeholder.svg",
+      "hashtag": "#tulipa"
     }
   ]
 }
