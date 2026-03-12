@@ -10,7 +10,7 @@
   <title>Tirinhas</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400;0,700;1,400;1,700&family=Permanent+Marker&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body data-page="reader">
@@ -18,14 +18,22 @@
   <!-- Cursor customizado -->
   <div id="cursor" aria-hidden="true"></div>
 
-  <!-- ── Header ── -->
+  <!-- ── Header / Masthead ── -->
   <header class="site-header" role="banner">
-    <a href="index.html" class="site-logo" aria-label="Ir para a tirinha mais recente">
-      Tirinhas
-    </a>
-    <nav class="site-nav" aria-label="Navegação principal">
-      <a href="arquivo.html" class="nav-link">Arquivo</a>
-    </nav>
+    <div class="header-inner">
+      <a href="index.html" class="site-logo" aria-label="Ir para a tirinha mais recente">
+        Tirinhas
+      </a>
+      <nav class="site-nav" aria-label="Navegação principal">
+        <a href="personagens.html" class="nav-link">Personagens</a>
+        <a href="arquivo.html" class="nav-link">Arquivo</a>
+      </nav>
+    </div>
+    <div class="header-dateline">
+      <span id="header-date"></span>
+      <span class="header-dateline-rule"></span>
+      <span>dia sim, dia não</span>
+    </div>
   </header>
 
   <!-- ── Conteúdo principal ── -->
