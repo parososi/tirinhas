@@ -12,7 +12,6 @@
   padding: 0;
 }
 
-/* Garantia que hidden sempre funciona */
 [hidden] { display: none !important; }
 
 :root {
@@ -21,12 +20,16 @@
   --ink: #111008;
   --ink-mid: #3a3020;
   --ink-light: #6b5f4a;
+  --accent: #c41e1e;
   --border: 2px solid var(--ink);
   --border-thin: 1px solid var(--ink);
   --radius: 0;
   --font-masthead: 'Permanent Marker', cursive;
   --font-body: 'Arimo', Arial, Helvetica, sans-serif;
-  --transition: 0.15s ease;
+  --transition: 0.18s ease;
+  --shadow-sm: 3px 3px 0 0 var(--ink);
+  --shadow-md: 5px 5px 0 0 var(--ink);
+  --shadow-lg: 8px 8px 0 0 var(--ink);
 }
 
 html {
@@ -40,10 +43,10 @@ body {
   line-height: 1.6;
   min-height: 100vh;
   overflow-x: hidden;
-  cursor: none;
+  cursor: auto;
 }
 
-/* Textura sutil de papel */
+/* ── Textura de papel com grão ── */
 body::before {
   content: '';
   position: fixed;
@@ -53,71 +56,29 @@ body::before {
       0deg,
       transparent,
       transparent 28px,
-      rgba(0,0,0,0.018) 28px,
-      rgba(0,0,0,0.018) 29px
+      rgba(0,0,0,0.025) 28px,
+      rgba(0,0,0,0.025) 29px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 56px,
+      rgba(0,0,0,0.008) 56px,
+      rgba(0,0,0,0.008) 57px
     );
   pointer-events: none;
   z-index: 0;
 }
 
-/* ── Cursor vintage (mira/retículo) ── */
-#cursor {
-  position: fixed;
-  width: 4px;
-  height: 4px;
-  background: var(--ink);
-  border-radius: 0;
-  pointer-events: none;
-  z-index: 9999;
-  transform: translate(-50%, -50%);
-  transition: width 0.12s ease, height 0.12s ease, background 0.12s ease, border 0.12s ease, border-radius 0.12s ease;
-}
-
-#cursor::before,
-#cursor::after {
+/* Grão de papel via SVG noise */
+body::after {
   content: '';
-  position: absolute;
-  background: var(--ink);
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.045;
   pointer-events: none;
-  top: 50%;
-  left: 50%;
-  transition: width 0.12s ease, height 0.12s ease;
-}
-
-/* Linha horizontal da mira */
-#cursor::before {
-  width: 18px;
-  height: 1px;
-  transform: translate(-50%, -50%);
-}
-
-/* Linha vertical da mira */
-#cursor::after {
-  width: 1px;
-  height: 18px;
-  transform: translate(-50%, -50%);
-}
-
-/* Hover: círculo com mira estendida */
-#cursor.expanded {
-  width: 18px;
-  height: 18px;
-  background: transparent;
-  border: 1.5px solid var(--ink);
-  border-radius: 50%;
-}
-
-#cursor.expanded::before {
-  width: 28px;
-}
-
-#cursor.expanded::after {
-  height: 28px;
-}
-
-@media (hover: none) {
-  #cursor { display: none; }
-  body { cursor: auto; }
+  z-index: 0;
 }
 
 /* ── Seleção de texto ── */
@@ -135,14 +96,34 @@ body::before {
   z-index: 100;
   background: var(--bg);
   border-bottom: var(--border);
+  animation: headerSlideDown 0.4s ease both;
 }
 
-/* Linha decorativa acima do masthead */
-.site-header::before {
-  content: '';
-  display: block;
+@keyframes headerSlideDown {
+  from { transform: translateY(-100%); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+
+/* Barra vermelha no topo */
+.header-top-bar {
   height: 4px;
   background: var(--ink);
+  position: relative;
+  overflow: hidden;
+}
+
+.header-top-bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0,
+    transparent 60px,
+    var(--accent) 60px,
+    var(--accent) 120px
+  );
+  opacity: 0.35;
 }
 
 .header-inner {
@@ -160,6 +141,7 @@ body::before {
   text-decoration: none;
   letter-spacing: -0.01em;
   line-height: 1;
+  transition: opacity var(--transition);
 }
 
 .site-logo:hover { opacity: 0.7; }
@@ -182,13 +164,18 @@ body::before {
   padding: 0.45rem 0.9rem;
   border: var(--border);
   margin-left: -2px;
-  transition: background var(--transition), color var(--transition);
+  transition: background var(--transition), color var(--transition), transform 0.1s ease, box-shadow 0.1s ease;
+  cursor: pointer;
 }
 
 .nav-link:hover,
 .nav-link.active {
   background: var(--ink);
   color: var(--bg);
+}
+
+.nav-link:active {
+  transform: translate(1px, 1px);
 }
 
 /* Linha de data/subtítulo abaixo do header */
@@ -219,35 +206,75 @@ body::before {
   z-index: 1;
 }
 
-/* ── Leitor de Tirinha ── */
-.comic-reader {
-  max-width: 960px;
+/* ── Feed de Tirinhas (index.html) ── */
+.feed-page {
+  max-width: 780px;
   margin: 0 auto;
   padding: 2.5rem 2rem 5rem;
 }
 
-/* Cabeçalho da tirinha */
-.comic-header {
+/* Artigo individual no feed */
+.feed-comic {
+  margin-bottom: 0;
+}
+
+/* Animação de scroll reveal */
+.feed-comic.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.feed-comic.reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Delay escalonado para cada comic no feed */
+.feed-comic:nth-child(1) { transition-delay: 0.05s; }
+.feed-comic:nth-child(2) { transition-delay: 0.1s; }
+.feed-comic:nth-child(3) { transition-delay: 0.15s; }
+.feed-comic:nth-child(4) { transition-delay: 0.2s; }
+.feed-comic:nth-child(5) { transition-delay: 0.25s; }
+.feed-comic:nth-child(6) { transition-delay: 0.3s; }
+
+/* Cabeçalho do comic no feed */
+.feed-comic-header {
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  padding-bottom: 0.75rem;
+  gap: 0.85rem;
+  margin-bottom: 0.85rem;
+  padding-bottom: 0.65rem;
   border-bottom: var(--border);
 }
 
-.comic-title {
+.feed-comic-num {
   font-family: var(--font-body);
-  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--bg);
+  background: var(--accent);
+  padding: 0.2rem 0.5rem;
+  line-height: 1;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.feed-comic-title {
+  font-family: var(--font-body);
+  font-size: clamp(1.2rem, 3vw, 1.65rem);
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: -0.01em;
+  flex: 1;
+  min-width: 0;
 }
 
-.comic-date {
+.feed-comic-date {
   font-family: var(--font-body);
-  font-size: 0.72rem;
+  font-size: 0.65rem;
   color: var(--ink-light);
   white-space: nowrap;
   flex-shrink: 0;
@@ -255,35 +282,40 @@ body::before {
   text-transform: uppercase;
 }
 
-/* Frame da tirinha */
-.comic-frame {
+/* Frame da imagem no feed */
+.feed-comic-frame {
   position: relative;
   border: var(--border);
   overflow: hidden;
   background: var(--bg-white);
-  box-shadow: 4px 4px 0 0 var(--ink);
-  cursor: none;
+  box-shadow: var(--shadow-md);
+  cursor: zoom-in;
+  transition: box-shadow 0.22s ease, transform 0.22s ease;
 }
 
-.comic-frame img,
-.comic-frame svg,
-.comic-frame object {
+.feed-comic-frame:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translate(-1px, -1px);
+}
+
+.feed-comic-frame:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 0 var(--ink);
+}
+
+.feed-comic-frame img {
   display: block;
   width: 100%;
   height: auto;
-  max-height: 68vh;
   object-fit: contain;
-  /* Proteção anti-cópia */
   pointer-events: none;
   user-select: none;
   -webkit-user-select: none;
   -webkit-user-drag: none;
-  -moz-user-drag: none;
-  draggable: false;
 }
 
-/* Overlay transparente — bloqueia arrasto e menu de contexto */
-.comic-frame::after {
+/* Overlay anti-drag */
+.feed-comic-frame::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -291,20 +323,115 @@ body::before {
   background: transparent;
 }
 
-/* Dica "toque para ampliar" — só aparece em touch */
-.comic-tap-hint {
-  display: none;
+/* Comentário do autor no feed */
+.feed-comic-comment {
+  margin-top: 0.85rem;
+  padding: 0.75rem 1rem;
+  border-left: 3px solid var(--accent);
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 0.88rem;
+  color: var(--ink-mid);
+  background: rgba(0,0,0,0.025);
+}
+
+/* Divisor ornamentado entre tirinhas */
+.feed-divider {
+  border: none;
+  margin: 2.5rem 0;
+  position: relative;
   text-align: center;
-  font-size: 0.6rem;
+  height: 1px;
+  background: var(--border-thin);
+  overflow: visible;
+}
+
+.feed-divider::before {
+  content: '◆';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--bg);
+  padding: 0 0.75rem;
+  font-size: 0.55rem;
+  color: var(--ink-light);
+  letter-spacing: 0.4em;
+}
+
+/* Dica "clique para ampliar" */
+.feed-comic-hint {
+  text-align: right;
+  font-size: 0.58rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--ink-light);
-  margin-top: 0.5rem;
-  opacity: 0.7;
+  margin-top: 0.4rem;
+  opacity: 0.6;
 }
 
 @media (hover: none) {
-  .comic-tap-hint { display: block; }
+  .feed-comic-hint { display: none; }
+}
+
+/* ── Paginação do Feed ── */
+.feed-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: var(--border);
+}
+
+.feed-page-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  padding: 0.55rem 1.25rem;
+  border: var(--border);
+  background: transparent;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), transform 0.1s ease, box-shadow 0.1s ease;
+  margin-left: -2px;
+}
+
+.feed-page-btn:first-child { margin-left: 0; }
+
+.feed-page-btn:hover {
+  background: var(--ink);
+  color: var(--bg);
+  box-shadow: var(--shadow-sm);
+  transform: translate(-1px, -1px);
+}
+
+.feed-page-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: none;
+}
+
+.feed-page-btn:disabled,
+.feed-page-btn.disabled {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.feed-page-info {
+  font-size: 0.7rem;
+  color: var(--ink-light);
+  padding: 0.55rem 1.5rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: var(--border);
+  margin-left: -2px;
+  background: var(--bg-white);
 }
 
 /* ── Lightbox (zoom de imagem) ── */
@@ -349,6 +476,12 @@ body::before {
   -webkit-user-select: none;
   -webkit-user-drag: none;
   border: var(--border);
+  animation: lightboxZoomIn 0.22s ease both;
+}
+
+@keyframes lightboxZoomIn {
+  from { transform: scale(0.92); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
 }
 
 .lightbox-close {
@@ -366,7 +499,7 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: none;
+  cursor: pointer;
   z-index: 10001;
   transition: background var(--transition), color var(--transition);
 }
@@ -389,11 +522,91 @@ body::before {
   pointer-events: none;
 }
 
-/* Comentário do autor */
+/* ── Leitor de Tirinha (modo legado — não usado no feed) ── */
+.comic-reader {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem 5rem;
+}
+
+.comic-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: var(--border);
+}
+
+.comic-title {
+  font-family: var(--font-body);
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.comic-date {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  color: var(--ink-light);
+  white-space: nowrap;
+  flex-shrink: 0;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.comic-frame {
+  position: relative;
+  border: var(--border);
+  overflow: hidden;
+  background: var(--bg-white);
+  box-shadow: var(--shadow-md);
+  cursor: zoom-in;
+}
+
+.comic-frame img,
+.comic-frame svg,
+.comic-frame object {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 68vh;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+}
+
+.comic-frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: transparent;
+}
+
+.comic-tap-hint {
+  display: none;
+  text-align: center;
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  margin-top: 0.5rem;
+  opacity: 0.7;
+}
+
+@media (hover: none) {
+  .comic-tap-hint { display: block; }
+}
+
 .comic-comment {
   margin-top: 1rem;
   padding: 0.85rem 1.1rem;
-  border-left: 3px solid var(--ink);
+  border-left: 3px solid var(--accent);
   font-family: var(--font-body);
   font-style: italic;
   font-size: 0.9rem;
@@ -401,7 +614,6 @@ body::before {
   background: rgba(0,0,0,0.03);
 }
 
-/* Navegação prev/next */
 .comic-nav {
   display: flex;
   align-items: center;
@@ -423,13 +635,20 @@ body::before {
   padding: 0.55rem 1.1rem;
   border: var(--border);
   background: transparent;
-  cursor: none;
-  transition: background var(--transition), color var(--transition);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), transform 0.1s ease, box-shadow 0.1s ease;
 }
 
 .nav-btn:hover {
   background: var(--ink);
   color: var(--bg);
+  box-shadow: var(--shadow-sm);
+  transform: translate(-1px, -1px);
+}
+
+.nav-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: none;
 }
 
 .nav-btn:disabled,
@@ -448,34 +667,16 @@ body::before {
   text-transform: uppercase;
 }
 
-/* ── Animações de transição entre tirinhas ── */
-.comic-frame.slide-out-left {
-  animation: slideOutLeft 0.2s ease both;
-}
-.comic-frame.slide-out-right {
-  animation: slideOutRight 0.2s ease both;
-}
-.comic-frame.slide-in-left {
-  animation: slideInLeft 0.2s ease both;
-}
-.comic-frame.slide-in-right {
-  animation: slideInRight 0.2s ease both;
-}
+/* Transições legado */
+.comic-frame.slide-out-left  { animation: slideOutLeft 0.2s ease both; }
+.comic-frame.slide-out-right { animation: slideOutRight 0.2s ease both; }
+.comic-frame.slide-in-left   { animation: slideInLeft 0.2s ease both; }
+.comic-frame.slide-in-right  { animation: slideInRight 0.2s ease both; }
 
-@keyframes slideOutLeft {
-  to { transform: translateX(-6%); opacity: 0; }
-}
-@keyframes slideOutRight {
-  to { transform: translateX(6%); opacity: 0; }
-}
-@keyframes slideInLeft {
-  from { transform: translateX(5%); opacity: 0; }
-  to   { transform: translateX(0); opacity: 1; }
-}
-@keyframes slideInRight {
-  from { transform: translateX(-5%); opacity: 0; }
-  to   { transform: translateX(0); opacity: 1; }
-}
+@keyframes slideOutLeft  { to   { transform: translateX(-6%); opacity: 0; } }
+@keyframes slideOutRight { to   { transform: translateX(6%); opacity: 0; } }
+@keyframes slideInLeft   { from { transform: translateX(5%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes slideInRight  { from { transform: translateX(-5%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
 .comic-header.fade-update,
 .comic-comment.fade-update {
@@ -498,6 +699,12 @@ body::before {
   margin-bottom: 2rem;
   padding-bottom: 0.75rem;
   border-bottom: var(--border);
+  animation: fadeUp 0.4s ease both 0.1s;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .page-header h1 {
@@ -519,6 +726,7 @@ body::before {
 /* Barra de pesquisa do arquivo */
 .archive-search-wrap {
   margin-bottom: 1.5rem;
+  animation: fadeUp 0.4s ease both 0.15s;
 }
 
 .archive-search {
@@ -534,6 +742,7 @@ body::before {
   transition: box-shadow var(--transition);
   appearance: none;
   -webkit-appearance: none;
+  cursor: text;
 }
 
 .archive-search::placeholder {
@@ -542,10 +751,9 @@ body::before {
 }
 
 .archive-search:focus {
-  box-shadow: 3px 3px 0 0 var(--ink);
+  box-shadow: var(--shadow-sm);
 }
 
-/* Remove o ícone nativo do Safari/Chrome para input[type=search] */
 .archive-search::-webkit-search-cancel-button,
 .archive-search::-webkit-search-decoration {
   -webkit-appearance: none;
@@ -560,11 +768,12 @@ body::before {
   min-height: 1.2em;
 }
 
-/* Lista de arquivo — estilo jornal (não grid) */
+/* Lista de arquivo */
 .archive-list {
   display: flex;
   flex-direction: column;
   gap: 0;
+  animation: fadeUp 0.4s ease both 0.2s;
 }
 
 .archive-item {
@@ -575,8 +784,9 @@ body::before {
   color: var(--ink);
   border-bottom: var(--border-thin);
   background: var(--bg-white);
-  transition: background var(--transition);
+  transition: background var(--transition), transform 0.12s ease, box-shadow 0.12s ease;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .archive-item:first-child {
@@ -586,6 +796,7 @@ body::before {
 .archive-item:hover {
   background: var(--ink);
   color: var(--bg);
+  transform: translateX(3px);
 }
 
 .archive-item-img {
@@ -690,8 +901,8 @@ body::before {
   padding: 0.5rem 1rem;
   border: var(--border);
   background: transparent;
-  cursor: none;
-  transition: background var(--transition), color var(--transition);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), transform 0.1s ease, box-shadow 0.1s ease;
   margin-left: -2px;
 }
 
@@ -700,6 +911,13 @@ body::before {
 .pagination-btn:hover {
   background: var(--ink);
   color: var(--bg);
+  box-shadow: var(--shadow-sm);
+  transform: translate(-1px, -1px);
+}
+
+.pagination-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: none;
 }
 
 .pagination-btn:disabled,
@@ -732,6 +950,7 @@ body::before {
   gap: 0;
   border-top: var(--border);
   border-left: var(--border);
+  animation: fadeUp 0.4s ease both 0.15s;
 }
 
 .character-card {
@@ -743,13 +962,20 @@ body::before {
   text-decoration: none;
   color: var(--ink);
   display: block;
-  cursor: none;
-  transition: background var(--transition), color var(--transition);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .character-card:hover {
   background: var(--ink);
   color: var(--bg);
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-md);
+}
+
+.character-card:active {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 0 var(--ink);
 }
 
 .character-card:hover .character-card-img {
@@ -793,7 +1019,6 @@ body::before {
   display: block;
 }
 
-/* Placeholder quando sem imagem própria */
 .character-card-img .char-placeholder {
   font-size: 3.5rem;
   opacity: 0.2;
@@ -883,12 +1108,20 @@ body::before {
   padding: 0.45rem 0.9rem;
   border: var(--border);
   margin-bottom: 2rem;
-  transition: background var(--transition), color var(--transition);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), transform 0.1s ease, box-shadow 0.1s ease;
 }
 
 .personagem-back:hover {
   background: var(--ink);
   color: var(--bg);
+  box-shadow: var(--shadow-sm);
+  transform: translate(-1px, -1px);
+}
+
+.personagem-back:active {
+  transform: translate(1px, 1px);
+  box-shadow: none;
 }
 
 .personagem-layout {
@@ -896,7 +1129,8 @@ body::before {
   grid-template-columns: 320px 1fr;
   gap: 0;
   border: var(--border);
-  box-shadow: 4px 4px 0 0 var(--ink);
+  box-shadow: var(--shadow-md);
+  animation: fadeUp 0.4s ease both 0.1s;
 }
 
 .personagem-img-col {
@@ -1040,7 +1274,6 @@ body::before {
   gap: 1.25rem;
 }
 
-/* Spinner estilo "impressora" — simples e rápido */
 .ink-loader {
   width: 32px;
   height: 32px;
@@ -1101,6 +1334,7 @@ body::before {
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  transition: opacity var(--transition);
 }
 
 .footer-back:hover { opacity: 0.55; }
@@ -1122,29 +1356,21 @@ body::before {
     padding-top: 6rem;
   }
 
+  .feed-page,
   .comic-reader,
   .archive-page,
   .characters-page {
     padding: 1.75rem 1.25rem 4rem;
   }
 
-  .comic-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.25rem;
+  .feed-comic-header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
 
-  .comic-nav { gap: 0.5rem; }
-
-  .nav-btn {
-    font-size: 0.65rem;
-    padding: 0.5rem 0.85rem;
-  }
-
-  .comic-counter {
+  .feed-comic-date {
     width: 100%;
-    text-align: center;
-    order: -1;
+    order: 3;
   }
 
   .archive-item {
@@ -1225,26 +1451,29 @@ body::before {
     font-size: 0.8rem;
     padding: 0.55rem 0.85rem;
   }
+
+  .feed-page-btn span:not(.arrow) {
+    display: none;
+  }
 }
 
 /* ── Tema de impressão ── */
 @media print {
   body::before,
+  body::after,
   .site-header,
   .comic-nav,
+  .feed-pagination,
   .site-footer,
-  #cursor,
   .lightbox-overlay {
     display: none !important;
   }
 
-  /* Oculta a imagem da tirinha na impressão */
-  .comic-frame img,
-  .comic-frame svg {
+  .feed-comic-frame img {
     visibility: hidden !important;
   }
 
-  .comic-frame::before {
+  .feed-comic-frame::before {
     content: '© Todos os direitos reservados. Reprodução proibida.';
     display: flex;
     align-items: center;
@@ -1256,7 +1485,7 @@ body::before {
     visibility: visible !important;
   }
 
-  .comic-frame {
+  .feed-comic-frame {
     box-shadow: none;
     border: 1px solid #000;
   }
@@ -1273,5 +1502,9 @@ body::before {
     border-top-color: var(--ink);
     opacity: 0.4;
     animation: none;
+  }
+  .feed-comic.reveal {
+    opacity: 1;
+    transform: none;
   }
 }

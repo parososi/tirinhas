@@ -15,11 +15,9 @@
 </head>
 <body data-page="reader">
 
-  <!-- Cursor customizado -->
-  <div id="cursor" aria-hidden="true"></div>
-
   <!-- ── Header / Masthead ── -->
   <header class="site-header" role="banner">
+    <div class="header-top-bar"></div>
     <div class="header-inner">
       <a href="index.html" class="site-logo" aria-label="Ir para a tirinha mais recente">
         Tirinhas
@@ -38,7 +36,7 @@
 
   <!-- ── Conteúdo principal ── -->
   <main class="main-content">
-    <div class="comic-reader">
+    <div class="feed-page">
 
       <!-- Estado de loading -->
       <div id="loading-state" class="loading-state" role="status" aria-live="polite">
@@ -52,53 +50,23 @@
         <p>Não foi possível carregar as tirinhas.</p>
       </div>
 
-      <!-- Leitor de tirinha -->
-      <div id="comic-reader-content" hidden>
+      <!-- Feed de tirinhas -->
+      <div id="comic-feed" hidden aria-label="Feed de tirinhas"></div>
 
-        <!-- Cabeçalho: título + data -->
-        <div class="comic-header">
-          <h1 class="comic-title" id="comic-title"></h1>
-          <time class="comic-date" id="comic-date" aria-label="Data de publicação"></time>
-        </div>
+      <!-- Paginação do feed -->
+      <nav id="feed-pagination" class="feed-pagination" hidden aria-label="Paginação do feed">
+        <button type="button" id="feed-prev" class="feed-page-btn disabled" aria-label="Página anterior">
+          <span class="arrow" aria-hidden="true">←</span>
+          <span>Anteriores</span>
+        </button>
+        <span id="feed-page-info" class="feed-page-info" aria-live="polite"></span>
+        <button type="button" id="feed-next" class="feed-page-btn" aria-label="Próxima página">
+          <span>Próximas</span>
+          <span class="arrow" aria-hidden="true">→</span>
+        </button>
+      </nav>
 
-        <!-- Frame da tirinha -->
-        <div class="comic-frame" id="comic-frame" role="img" aria-labelledby="comic-title">
-          <!-- imagem inserida via JS -->
-        </div>
-
-        <!-- Comentário do autor -->
-        <blockquote class="comic-comment" id="comic-comment" hidden></blockquote>
-
-        <!-- Navegação -->
-        <nav class="comic-nav" aria-label="Navegação entre tirinhas">
-          <button
-            type="button"
-            id="btn-prev"
-            class="nav-btn prev disabled"
-            aria-label="Tirinha anterior"
-            aria-disabled="true"
-          >
-            <span class="arrow" aria-hidden="true">←</span>
-            <span>Anterior</span>
-          </button>
-
-          <span class="comic-counter" id="comic-counter" aria-live="polite"></span>
-
-          <button
-            type="button"
-            id="btn-next"
-            class="nav-btn next disabled"
-            aria-label="Próxima tirinha"
-            aria-disabled="true"
-          >
-            <span>Próxima</span>
-            <span class="arrow" aria-hidden="true">→</span>
-          </button>
-        </nav>
-
-      </div><!-- /#comic-reader-content -->
-
-    </div><!-- /.comic-reader -->
+    </div><!-- /.feed-page -->
   </main>
 
   <!-- ── Footer ── -->
