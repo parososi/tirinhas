@@ -1,0 +1,640 @@
+/* =============================================
+   TIRINHAS — CSS
+   Minimalista · Preto & Branco · Animado
+   ============================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+/* ── Reset & Base ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #fafaf8;
+  --ink: #0a0a0a;
+  --ink-light: #3a3a38;
+  --border: 2px solid #0a0a0a;
+  --radius: 2px;
+  --font-title: 'Permanent Marker', cursive;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ── Cursor customizado ── */
+#cursor {
+  position: fixed;
+  width: 12px;
+  height: 12px;
+  background: var(--ink);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s ease, width 0.2s ease, height 0.2s ease;
+  mix-blend-mode: multiply;
+}
+
+#cursor.expanded {
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: 2px solid var(--ink);
+}
+
+@media (hover: none) {
+  #cursor { display: none; }
+  body { cursor: auto; }
+}
+
+/* ── Seleção de texto ── */
+::selection {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+/* ── Header ── */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 2.5rem;
+  background: var(--bg);
+  border-bottom: var(--border);
+  animation: slideDown 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-100%); }
+  to   { transform: translateY(0); }
+}
+
+.site-logo {
+  font-family: var(--font-title);
+  font-size: 1.75rem;
+  color: var(--ink);
+  text-decoration: none;
+  letter-spacing: -0.02em;
+  transition: opacity var(--transition);
+}
+
+.site-logo:hover { opacity: 0.65; }
+
+.site-nav {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.nav-link {
+  position: relative;
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink);
+  padding: 0.5rem 1rem;
+  border: var(--border);
+  overflow: hidden;
+  transition: color var(--transition);
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--transition);
+  z-index: -1;
+}
+
+.nav-link:hover::before,
+.nav-link.active::before {
+  transform: scaleX(1);
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--bg);
+}
+
+/* ── Conteúdo Principal ── */
+.main-content {
+  padding-top: 5rem;
+  min-height: 100vh;
+}
+
+/* ── Leitor de Tirinha ── */
+.comic-reader {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 3rem 2rem 5rem;
+}
+
+/* Cabeçalho da tirinha */
+.comic-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: var(--border);
+  opacity: 0;
+  animation: fadeUp 0.5s ease 0.4s both;
+}
+
+.comic-title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.comic-date {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--ink-light);
+  white-space: nowrap;
+  flex-shrink: 0;
+  letter-spacing: 0.05em;
+}
+
+/* Wrapper da imagem da tirinha */
+.comic-frame {
+  position: relative;
+  border: var(--border);
+  overflow: hidden;
+  background: #fff;
+  animation: stamp 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+}
+
+@keyframes stamp {
+  from {
+    transform: scale(0.93) rotate(-0.6deg);
+    opacity: 0;
+    box-shadow: 0 0 0 0 var(--ink);
+  }
+  to {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+    box-shadow: 5px 5px 0 0 var(--ink);
+  }
+}
+
+.comic-frame:hover {
+  box-shadow: 3px 3px 0 0 var(--ink);
+  transition: box-shadow 0.15s ease;
+}
+
+.comic-frame img,
+.comic-frame svg,
+.comic-frame object {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 70vh;
+  object-fit: contain;
+}
+
+/* Comentário do autor */
+.comic-comment {
+  margin-top: 1.25rem;
+  padding: 1rem 1.25rem;
+  border-left: 3px solid var(--ink);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--ink-light);
+  opacity: 0;
+  animation: fadeUp 0.5s ease 0.6s both;
+}
+
+/* Navegação prev/next */
+.comic-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 2.5rem;
+  gap: 1rem;
+  opacity: 0;
+  animation: fadeUp 0.5s ease 0.7s both;
+}
+
+.nav-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink);
+  padding: 0.7rem 1.25rem;
+  border: var(--border);
+  background: transparent;
+  cursor: none;
+  overflow: hidden;
+  transition: color var(--transition);
+}
+
+.nav-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  transform: scaleX(0);
+  transition: transform var(--transition);
+  z-index: -1;
+}
+
+.nav-btn.prev::before { transform-origin: right; }
+.nav-btn.next::before { transform-origin: left; }
+
+.nav-btn:hover::before { transform: scaleX(1); }
+.nav-btn:hover { color: var(--bg); }
+
+.nav-btn:disabled,
+.nav-btn.disabled {
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+.nav-btn .arrow { font-size: 1.1rem; }
+
+.comic-counter {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ink-light);
+  letter-spacing: 0.1em;
+}
+
+/* ── Animações de transição entre tirinhas ── */
+.comic-frame.slide-out-left {
+  animation: slideOutLeft 0.35s cubic-bezier(0.4, 0, 1, 1) both;
+}
+.comic-frame.slide-out-right {
+  animation: slideOutRight 0.35s cubic-bezier(0.4, 0, 1, 1) both;
+}
+.comic-frame.slide-in-left {
+  animation: slideInLeft 0.45s cubic-bezier(0, 0, 0.2, 1) both;
+}
+.comic-frame.slide-in-right {
+  animation: slideInRight 0.45s cubic-bezier(0, 0, 0.2, 1) both;
+}
+
+@keyframes slideOutLeft {
+  to { transform: translateX(-8%) scale(0.97); opacity: 0; }
+}
+@keyframes slideOutRight {
+  to { transform: translateX(8%) scale(0.97); opacity: 0; }
+}
+@keyframes slideInLeft {
+  from { transform: translateX(6%) scale(0.97); opacity: 0; }
+  to   { transform: translateX(0) scale(1);    opacity: 1; }
+}
+@keyframes slideInRight {
+  from { transform: translateX(-6%) scale(0.97); opacity: 0; }
+  to   { transform: translateX(0) scale(1);     opacity: 1; }
+}
+
+.comic-header.fade-update,
+.comic-comment.fade-update {
+  animation: fadeRefresh 0.4s ease both;
+}
+
+@keyframes fadeRefresh {
+  0%  { opacity: 0; transform: translateY(6px); }
+  100%{ opacity: 1; transform: translateY(0); }
+}
+
+/* ── Utilitários de animação ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Página de Arquivo ── */
+.archive-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 3rem 2rem 5rem;
+}
+
+.archive-header {
+  margin-bottom: 2.5rem;
+  padding-bottom: 1rem;
+  border-bottom: var(--border);
+  animation: fadeUp 0.5s ease 0.2s both;
+  opacity: 0;
+}
+
+.archive-header h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(1.75rem, 5vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.archive-subtitle {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--ink-light);
+  letter-spacing: 0.05em;
+}
+
+/* Grid de arquivo */
+.archive-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.archive-card {
+  display: block;
+  text-decoration: none;
+  color: var(--ink);
+  border: var(--border);
+  overflow: hidden;
+  position: relative;
+  background: #fff;
+  opacity: 0;
+  transform: translateY(24px);
+  transition: box-shadow var(--transition), transform var(--transition);
+  /* animação de entrada controlada por JS (stagger) */
+}
+
+.archive-card.visible {
+  animation: cardReveal 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes cardReveal {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.archive-card:hover {
+  box-shadow: 5px 5px 0 0 var(--ink);
+  transform: translate(-2px, -2px);
+}
+
+.archive-card-img {
+  width: 100%;
+  aspect-ratio: 3 / 1;
+  overflow: hidden;
+  border-bottom: var(--border);
+}
+
+.archive-card-img img,
+.archive-card-img object {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform var(--transition-slow);
+}
+
+.archive-card:hover .archive-card-img img,
+.archive-card:hover .archive-card-img object {
+  transform: scale(1.04);
+}
+
+.archive-card-body {
+  padding: 1rem;
+}
+
+.archive-card-title {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 0.35rem;
+}
+
+.archive-card-date {
+  font-size: 0.72rem;
+  color: var(--ink-light);
+  letter-spacing: 0.08em;
+}
+
+.archive-card-num {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.75rem;
+  font-size: 0.65rem;
+  font-family: var(--font-mono);
+  color: var(--ink-light);
+  letter-spacing: 0.05em;
+}
+
+/* ── Loading state ── */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 2rem;
+  gap: 1.5rem;
+}
+
+.ink-loader {
+  width: 48px;
+  height: 48px;
+  border: 3px solid var(--ink);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  animation: pulse 1.5s ease infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 1; }
+}
+
+/* ── Error state ── */
+.error-state {
+  text-align: center;
+  padding: 6rem 2rem;
+}
+
+.error-state h2 {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.error-state p {
+  color: var(--ink-light);
+  font-size: 0.85rem;
+}
+
+/* ── Footer ── */
+.site-footer {
+  border-top: var(--border);
+  padding: 1.25rem 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: var(--ink-light);
+  letter-spacing: 0.05em;
+}
+
+.footer-back {
+  text-decoration: none;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  transition: opacity var(--transition);
+}
+
+.footer-back:hover { opacity: 0.55; }
+
+/* ── Responsivo ── */
+@media (max-width: 768px) {
+  .site-header {
+    padding: 1rem 1.25rem;
+  }
+
+  .site-logo {
+    font-size: 1.35rem;
+  }
+
+  .nav-link {
+    font-size: 0.7rem;
+    padding: 0.4rem 0.7rem;
+  }
+
+  .comic-reader,
+  .archive-page {
+    padding: 2rem 1.25rem 4rem;
+  }
+
+  .comic-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+
+  .comic-nav {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .nav-btn {
+    font-size: 0.72rem;
+    padding: 0.6rem 1rem;
+  }
+
+  .comic-counter {
+    width: 100%;
+    text-align: center;
+    order: -1;
+  }
+
+  .archive-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .site-footer {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+    padding: 1rem 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content { padding-top: 4.5rem; }
+
+  .comic-title {
+    font-size: 1.4rem;
+  }
+
+  .nav-btn span:not(.arrow) {
+    display: none;
+  }
+
+  .nav-btn {
+    padding: 0.65rem 1rem;
+  }
+}
+
+/* ── Tema de impressão ── */
+@media print {
+  .site-header,
+  .comic-nav,
+  .site-footer,
+  #cursor {
+    display: none !important;
+  }
+
+  .comic-frame {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+}
+
+/* ── Acessibilidade: sem movimento ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .ink-loader {
+    border-top-color: var(--ink);
+    opacity: 0.4;
+  }
+}
