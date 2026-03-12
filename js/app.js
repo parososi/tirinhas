@@ -98,6 +98,7 @@ function renderComic(index, animate = false, direction = 'none') {
 
   State.currentIndex = index;
   updateHash(index);
+  preloadAdjacent(index);
 
   const frame    = $('#comic-frame');
   const title    = $('#comic-title');
@@ -179,24 +180,26 @@ function renderComic(index, animate = false, direction = 'none') {
 }
 
 function updateFrameImage(frame, tirinha) {
-  // Limpa o frame
   frame.innerHTML = '';
+  const img = document.createElement('img');
+  img.src     = tirinha.imagem;
+  img.alt     = tirinha.alt || tirinha.titulo;
+  img.loading = 'eager'; // já pré-carregado, não usar lazy aqui
+  frame.appendChild(img);
+}
 
-  const isSVG = tirinha.imagem.toLowerCase().endsWith('.svg');
-  if (isSVG) {
-    // SVG via <img> para melhor compatibilidade
-    const img = document.createElement('img');
-    img.src   = tirinha.imagem;
-    img.alt   = tirinha.alt || tirinha.titulo;
-    img.loading = 'lazy';
-    frame.appendChild(img);
-  } else {
-    const img = document.createElement('img');
-    img.src   = tirinha.imagem;
-    img.alt   = tirinha.alt || tirinha.titulo;
-    img.loading = 'lazy';
-    frame.appendChild(img);
-  }
+// ── Pré-carregamento das tirinhas adjacentes ──
+function preloadAdjacent(index) {
+  const candidates = [index - 1, index + 1];
+  candidates.forEach(i => {
+    if (i >= 0 && i < State.tirinhas.length) {
+      const t = State.tirinhas[i];
+      if (t) {
+        const pre = new Image();
+        pre.src = t.imagem;
+      }
+    }
+  });
 }
 
 // ── Navegação ──

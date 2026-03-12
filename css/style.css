@@ -203,13 +203,18 @@ body {
   from {
     transform: scale(0.93) rotate(-0.6deg);
     opacity: 0;
-    box-shadow: 0 0 0 0 rgba(10,10,10,0);
+    box-shadow: 0 0 0 0 var(--ink);
   }
   to {
     transform: scale(1) rotate(0deg);
     opacity: 1;
-    box-shadow: 6px 6px 0 0 rgba(10,10,10,0.15);
+    box-shadow: 5px 5px 0 0 var(--ink);
   }
+}
+
+.comic-frame:hover {
+  box-shadow: 3px 3px 0 0 var(--ink);
+  transition: box-shadow 0.15s ease;
 }
 
 .comic-frame img,
@@ -618,5 +623,18 @@ body {
   .comic-frame {
     box-shadow: none;
     border: 1px solid #000;
+  }
+}
+
+/* ── Acessibilidade: sem movimento ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .ink-loader {
+    border-top-color: var(--ink);
+    opacity: 0.4;
   }
 }
