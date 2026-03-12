@@ -1,6 +1,6 @@
 /* =============================================
    TIRINHAS — app.js
-   Lógica de navegação, roteamento e animações
+   Lógica de navegação, feed e animações
    ============================================= */
 
 'use strict';
@@ -9,10 +9,12 @@
 const State = {
   tirinhas: [],        // Array ordenado por data (mais recente primeiro)
   personagens: [],     // Array de personagens
-  currentIndex: 0,     // Índice atual no array
+  currentIndex: 0,     // Índice atual (modo reader legado)
   isAnimating: false,  // Trava durante transições
   archivePage: 0,      // Página atual do arquivo
-  ARCHIVE_PER_PAGE: 10, // Tirinhas por página no arquivo
+  ARCHIVE_PER_PAGE: 10,
+  feedPage: 0,         // Página atual do feed
+  FEED_PER_PAGE: 6,    // Tirinhas por página no feed
 };
 
 // ── Utilitários ──
@@ -39,28 +41,6 @@ function formatDateShort(dateStr) {
   }).replace('.', '');
 }
 
-// ── Cursor customizado ──
-function initCursor() {
-  const cursor = document.getElementById('cursor');
-  if (!cursor) return;
-
-  document.addEventListener('mousemove', (e) => {
-    cursor.style.left = e.clientX + 'px';
-    cursor.style.top  = e.clientY + 'px';
-  });
-
-  document.addEventListener('mouseenter', () => { cursor.style.opacity = '1'; });
-  document.addEventListener('mouseleave', () => { cursor.style.opacity = '0'; });
-
-  const interactives = 'a, button, [role="button"], input, label, select';
-  document.addEventListener('mouseover', (e) => {
-    if (e.target.closest(interactives)) cursor.classList.add('expanded');
-  });
-  document.addEventListener('mouseout', (e) => {
-    if (e.target.closest(interactives)) cursor.classList.remove('expanded');
-  });
-}
-
 // ── Carregar dados com timeout ──
 async function loadData() {
   const controller = new AbortController();
@@ -82,28 +62,6 @@ async function loadData() {
   }
 }
 
-// ── Roteamento por hash ──
-function getTargetIndex() {
-  const hash = window.location.hash;
-  if (!hash) return 0;
-
-  const match = hash.match(/^#tirinha-(\d+)$/);
-  if (!match) return 0;
-
-  const id = parseInt(match[1], 10);
-  const idx = State.tirinhas.findIndex(t => t.id === id);
-  return idx >= 0 ? idx : 0;
-}
-
-function updateHash(index) {
-  const tirinha = State.tirinhas[index];
-  if (!tirinha) return;
-  const newHash = `#tirinha-${tirinha.id}`;
-  if (window.location.hash !== newHash) {
-    history.replaceState(null, '', newHash);
-  }
-}
-
 // ── Atualizar dateline do header ──
 function updateHeaderDateline() {
   const el = document.getElementById('header-date');
@@ -119,11 +77,11 @@ function updateHeaderDateline() {
 
 // ── Proteção de imagens ──
 function initImageProtection() {
-  // Bloqueia menu de contexto (botão direito) em imagens e frames de tirinha
   document.addEventListener('contextmenu', (e) => {
     const target = e.target;
     if (
       target.tagName === 'IMG' ||
+      target.closest('.feed-comic-frame') ||
       target.closest('.comic-frame') ||
       target.closest('.archive-item-img') ||
       target.closest('.lightbox-img-wrap') ||
@@ -133,7 +91,6 @@ function initImageProtection() {
     }
   });
 
-  // Bloqueia arrasto de imagens
   document.addEventListener('dragstart', (e) => {
     if (e.target.tagName === 'IMG') {
       e.preventDefault();
@@ -160,20 +117,16 @@ function createLightbox() {
   `;
   document.body.appendChild(el);
 
-  // Bloqueia menu de contexto dentro do lightbox
   el.addEventListener('contextmenu', (e) => e.preventDefault());
 
-  // Fecha ao clicar no overlay (fora da imagem)
   el.addEventListener('click', (e) => {
     if (e.target === el || e.target.classList.contains('lightbox-caption')) {
       closeLightbox();
     }
   });
 
-  // Botão fechar
   el.querySelector('#lightbox-close').addEventListener('click', closeLightbox);
 
-  // Tecla Escape
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && _lightbox && _lightbox.classList.contains('active')) {
       closeLightbox();
@@ -186,10 +139,17 @@ function createLightbox() {
 function openLightbox(src, alt) {
   if (!_lightbox) _lightbox = createLightbox();
 
-  const img = document.getElementById('lightbox-img');
-  if (img) {
+  const wrap = document.getElementById('lightbox-img-wrap');
+  if (wrap) {
+    // Recria a img para reiniciar a animação sempre que abrir
+    const oldImg = wrap.querySelector('img');
+    if (oldImg) oldImg.remove();
+    const img = document.createElement('img');
+    img.id = 'lightbox-img';
     img.src = src;
     img.alt = alt || '';
+    img.draggable = false;
+    wrap.appendChild(img);
   }
 
   _lightbox.classList.add('active');
@@ -202,183 +162,48 @@ function closeLightbox() {
   document.body.style.overflow = '';
 }
 
-function initLightbox() {
-  // Cria o lightbox no DOM
-  _lightbox = createLightbox();
-
-  // Listener de clique no frame da tirinha (abre lightbox)
-  const frame = document.getElementById('comic-frame');
-  if (!frame) return;
-
-  frame.addEventListener('click', () => {
-    const img = frame.querySelector('img');
-    if (img && img.src) openLightbox(img.src, img.alt);
-  });
-
-  // Dica "toque para ampliar" (somente touch devices — via CSS display:none para desktop)
-  const hint = document.createElement('p');
-  hint.className = 'comic-tap-hint';
-  hint.setAttribute('aria-hidden', 'true');
-  hint.textContent = '↑ toque na imagem para ampliar';
-  frame.insertAdjacentElement('afterend', hint);
-}
-
-// ── Renderizar tirinha ──
-function renderComic(index, animate = false, direction = 'none') {
-  const tirinha = State.tirinhas[index];
-  if (!tirinha) return;
-
-  State.currentIndex = index;
-  updateHash(index);
-  preloadAdjacent(index);
-
-  const frame   = $('#comic-frame');
-  const title   = $('#comic-title');
-  const date    = $('#comic-date');
-  const comment = $('#comic-comment');
-  const counter = $('#comic-counter');
-  const btnPrev = $('#btn-prev');
-  const btnNext = $('#btn-next');
-
-  if (!frame) return;
-
-  if (animate) {
-    [title?.parentElement, comment].forEach(el => {
-      if (!el) return;
-      el.classList.remove('fade-update');
-      void el.offsetWidth;
-      el.classList.add('fade-update');
+// ── Scroll Reveal (Intersection Observer) ──
+function initScrollReveal() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('revealed');
+        observer.unobserve(entry.target);
+      }
     });
-  }
-
-  if (title)   title.textContent  = tirinha.titulo;
-  if (date)    date.textContent   = formatDate(tirinha.data);
-  if (counter) counter.textContent = `${State.tirinhas.length - index} / ${State.tirinhas.length}`;
-
-  if (comment) {
-    if (tirinha.comentario && tirinha.comentario.trim()) {
-      comment.textContent = tirinha.comentario;
-      comment.hidden = false;
-    } else {
-      comment.hidden = true;
-    }
-  }
-
-  if (animate && direction !== 'none') {
-    const outClass = direction === 'next' ? 'slide-out-left'  : 'slide-out-right';
-    const inClass  = direction === 'next' ? 'slide-in-left'   : 'slide-in-right';
-
-    frame.classList.add(outClass);
-
-    setTimeout(() => {
-      updateFrameImage(frame, tirinha);
-      frame.classList.remove(outClass);
-      frame.classList.add(inClass);
-
-      frame.addEventListener('animationend', () => {
-        frame.classList.remove(inClass);
-        State.isAnimating = false;
-      }, { once: true });
-    }, 200);
-  } else {
-    updateFrameImage(frame, tirinha);
-    State.isAnimating = false;
-  }
-
-  if (btnPrev) {
-    const hasPrev = index < State.tirinhas.length - 1;
-    btnPrev.classList.toggle('disabled', !hasPrev);
-    btnPrev.setAttribute('aria-disabled', String(!hasPrev));
-    if (hasPrev) btnPrev.title = State.tirinhas[index + 1].titulo;
-  }
-
-  if (btnNext) {
-    const hasNext = index > 0;
-    btnNext.classList.toggle('disabled', !hasNext);
-    btnNext.setAttribute('aria-disabled', String(!hasNext));
-    if (hasNext) btnNext.title = State.tirinhas[index - 1].titulo;
-  }
-}
-
-function updateFrameImage(frame, tirinha) {
-  frame.innerHTML = '';
-  const img = document.createElement('img');
-  img.src     = tirinha.imagem;
-  img.alt     = tirinha.alt || tirinha.titulo;
-  img.loading = 'eager';
-  img.draggable = false;
-  frame.appendChild(img);
-}
-
-function preloadAdjacent(index) {
-  [index - 1, index + 1].forEach(i => {
-    if (i >= 0 && i < State.tirinhas.length) {
-      const pre = new Image();
-      pre.src = State.tirinhas[i].imagem;
-    }
+  }, {
+    threshold: 0.08,
+    rootMargin: '0px 0px -40px 0px',
   });
+
+  $$('.reveal').forEach(el => observer.observe(el));
 }
 
-// ── Navegação ──
-function navigate(direction) {
-  if (State.isAnimating) return;
-
-  const newIndex = direction === 'next'
-    ? State.currentIndex - 1
-    : State.currentIndex + 1;
-
-  if (newIndex < 0 || newIndex >= State.tirinhas.length) return;
-
-  State.isAnimating = true;
-  renderComic(newIndex, true, direction);
-}
-
-function initKeyboard() {
-  document.addEventListener('keydown', (e) => {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   navigate('prev');
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown')  navigate('next');
-  });
-}
-
-function initSwipe() {
-  let startX = 0, startY = 0;
-
-  document.addEventListener('touchstart', (e) => {
-    startX = e.touches[0].clientX;
-    startY = e.touches[0].clientY;
-  }, { passive: true });
-
-  document.addEventListener('touchend', (e) => {
-    const dx = e.changedTouches[0].clientX - startX;
-    const dy = e.changedTouches[0].clientY - startY;
-    if (Math.abs(dy) > Math.abs(dx) || Math.abs(dx) < 40) return;
-    if (dx < 0) navigate('next');
-    else         navigate('prev');
-  }, { passive: true });
-}
-
-// ── Mostrar/ocultar loading ──
-function showLoading() {
-  const reader  = $('#comic-reader-content');
+// ── Mostrar/ocultar loading (feed) ──
+function showFeedLoading() {
   const loading = $('#loading-state');
-  if (reader)  reader.hidden  = true;
+  const feed    = $('#comic-feed');
+  const pag     = $('#feed-pagination');
   if (loading) loading.hidden = false;
+  if (feed)    feed.hidden    = true;
+  if (pag)     pag.hidden     = true;
 }
 
-function hideLoading() {
-  const reader  = $('#comic-reader-content');
+function hideFeedLoading() {
   const loading = $('#loading-state');
+  const feed    = $('#comic-feed');
+  const pag     = $('#feed-pagination');
   if (loading) loading.hidden = true;
-  if (reader)  reader.hidden  = false;
+  if (feed)    feed.hidden    = false;
+  if (pag)     pag.hidden     = false;
 }
 
-function showError(msg) {
+function showFeedError(msg) {
+  const loading = $('#loading-state');
   const error   = $('#error-state');
-  const loading = $('#loading-state');
-  const reader  = $('#comic-reader-content');
+  const feed    = $('#comic-feed');
   if (loading) loading.hidden = true;
-  if (reader)  reader.hidden  = true;
+  if (feed)    feed.hidden    = true;
   if (error) {
     error.hidden = false;
     const p = $('p', error);
@@ -386,10 +211,124 @@ function showError(msg) {
   }
 }
 
-// ── Init — Leitor (index.html) ──
+// ── Construir artigo de tirinha no feed ──
+function buildFeedComic(tirinha, displayNum, isFirst) {
+  if (!_lightbox) _lightbox = createLightbox();
+
+  const article = document.createElement('article');
+  article.className = 'feed-comic reveal';
+  article.id = `tirinha-${tirinha.id}`;
+
+  const commentHTML = (tirinha.comentario && tirinha.comentario.trim())
+    ? `<blockquote class="feed-comic-comment">${tirinha.comentario}</blockquote>`
+    : '';
+
+  article.innerHTML = `
+    <header class="feed-comic-header">
+      <span class="feed-comic-num">#${String(displayNum).padStart(3, '0')}</span>
+      <h2 class="feed-comic-title">${tirinha.titulo}</h2>
+      <time class="feed-comic-date" datetime="${tirinha.data}">${formatDate(tirinha.data)}</time>
+    </header>
+    <div class="feed-comic-frame" role="img" aria-label="${tirinha.alt || tirinha.titulo}" tabindex="0" title="Clique para ampliar">
+      <img
+        src="${tirinha.imagem}"
+        alt="${tirinha.alt || tirinha.titulo}"
+        loading="${isFirst ? 'eager' : 'lazy'}"
+        draggable="false"
+      >
+    </div>
+    <p class="feed-comic-hint" aria-hidden="true">↑ clique para ampliar</p>
+    ${commentHTML}
+  `;
+
+  // Lightbox ao clicar no frame
+  const frame = article.querySelector('.feed-comic-frame');
+  const openAction = () => {
+    const img = frame.querySelector('img');
+    if (img && img.src) openLightbox(img.src, img.alt);
+  };
+  frame.addEventListener('click', openAction);
+  frame.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openAction(); }
+  });
+
+  return article;
+}
+
+// ── Renderizar página do feed ──
+function renderFeedPage(page) {
+  State.feedPage = page;
+
+  const feed  = $('#comic-feed');
+  const info  = $('#feed-page-info');
+  const prev  = $('#feed-prev');
+  const next  = $('#feed-next');
+
+  if (!feed) return;
+
+  // Animação de saída rápida
+  feed.style.opacity = '0';
+  feed.style.transform = 'translateY(10px)';
+  feed.style.transition = 'opacity 0.18s ease, transform 0.18s ease';
+
+  setTimeout(() => {
+    feed.innerHTML = '';
+
+    const total      = State.tirinhas.length;
+    const totalPages = Math.ceil(total / State.FEED_PER_PAGE);
+    const start      = page * State.FEED_PER_PAGE;
+    const end        = Math.min(start + State.FEED_PER_PAGE, total);
+    const slice      = State.tirinhas.slice(start, end);
+
+    slice.forEach((tirinha, i) => {
+      const globalIdx  = start + i;
+      const displayNum = total - globalIdx;
+      const article    = buildFeedComic(tirinha, displayNum, i === 0 && page === 0);
+      feed.appendChild(article);
+
+      // Divisor ornamentado (exceto após o último)
+      if (i < slice.length - 1) {
+        const divider = document.createElement('hr');
+        divider.className = 'feed-divider';
+        divider.setAttribute('aria-hidden', 'true');
+        feed.appendChild(divider);
+      }
+    });
+
+    // Fade de entrada
+    feed.style.opacity = '1';
+    feed.style.transform = 'translateY(0)';
+
+    // Scroll reveal
+    initScrollReveal();
+
+    // Paginação
+    if (info) info.textContent = `${page + 1} / ${totalPages}`;
+
+    if (prev) {
+      prev.disabled = page === 0;
+      prev.classList.toggle('disabled', page === 0);
+    }
+    if (next) {
+      next.disabled = page >= totalPages - 1;
+      next.classList.toggle('disabled', page >= totalPages - 1);
+    }
+
+    const pag = $('#feed-pagination');
+    if (pag) pag.hidden = totalPages <= 1;
+
+    // Scroll ao topo suavemente ao trocar de página (exceto primeira carga)
+    if (page > 0 || feed.dataset.initialized) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    feed.dataset.initialized = '1';
+
+  }, 180);
+}
+
+// ── Init — Feed (index.html) ──
 async function initReader() {
-  showLoading();
-  initCursor();
+  showFeedLoading();
   initImageProtection();
   updateHeaderDateline();
 
@@ -397,40 +336,34 @@ async function initReader() {
     await loadData();
 
     if (State.tirinhas.length === 0) {
-      showError('Nenhuma tirinha encontrada.');
+      showFeedError('Nenhuma tirinha encontrada.');
       return;
     }
 
-    hideLoading();
+    hideFeedLoading();
+    renderFeedPage(0);
 
-    const targetIndex = getTargetIndex();
-    renderComic(targetIndex);
-    initLightbox();
-    initKeyboard();
-    initSwipe();
+    const prev = $('#feed-prev');
+    const next = $('#feed-next');
 
-    const btnPrev = $('#btn-prev');
-    const btnNext = $('#btn-next');
-    if (btnPrev) btnPrev.addEventListener('click', () => navigate('prev'));
-    if (btnNext) btnNext.addEventListener('click', () => navigate('next'));
+    if (prev) prev.addEventListener('click', () => {
+      if (State.feedPage > 0) renderFeedPage(State.feedPage - 1);
+    });
 
-    window.addEventListener('hashchange', () => {
-      const idx = getTargetIndex();
-      if (idx !== State.currentIndex) {
-        State.isAnimating = false;
-        renderComic(idx, true, idx < State.currentIndex ? 'next' : 'prev');
-      }
+    if (next) next.addEventListener('click', () => {
+      const totalPages = Math.ceil(State.tirinhas.length / State.FEED_PER_PAGE);
+      if (State.feedPage < totalPages - 1) renderFeedPage(State.feedPage + 1);
     });
 
   } catch (err) {
     console.error('Erro ao carregar tirinhas:', err);
-    showError('Não foi possível carregar as tirinhas. Tente novamente mais tarde.');
+    showFeedError('Não foi possível carregar as tirinhas. Tente novamente mais tarde.');
   }
 }
 
 // ── Pesquisa no arquivo ──
 function searchTirinhas(query, total) {
-  if (!query.trim()) return null; // null = sem pesquisa (mostra paginação normal)
+  if (!query.trim()) return null;
 
   const q = query.toLowerCase().trim();
 
@@ -438,16 +371,12 @@ function searchTirinhas(query, total) {
     const num = String(total - globalIdx).padStart(3, '0');
     const numPlain = String(total - globalIdx);
 
-    // Busca por número: "1", "001", "#001", "#1"
     const numQuery = q.replace(/^#/, '');
     if (/^\d+$/.test(numQuery)) {
       if (num === numQuery.padStart(3, '0') || numPlain === numQuery) return true;
     }
 
-    // Busca por título
     if (t.titulo.toLowerCase().includes(q)) return true;
-
-    // Busca por hashtag
     if (t.hashtags && t.hashtags.some(h => h.toLowerCase().includes(q))) return true;
 
     return false;
@@ -456,7 +385,6 @@ function searchTirinhas(query, total) {
 
 // ── Init — Arquivo (arquivo.html) ──
 async function initArchive() {
-  initCursor();
   initImageProtection();
   updateHeaderDateline();
 
@@ -482,7 +410,6 @@ async function initArchive() {
       counter.textContent = `${total} tirinha${total !== 1 ? 's' : ''}`;
     }
 
-    // ── Renderizar item de arquivo ──
     function buildArchiveItem(tirinha, displayNum) {
       const item = document.createElement('a');
       item.href = `index.html#tirinha-${tirinha.id}`;
@@ -509,7 +436,6 @@ async function initArchive() {
       return item;
     }
 
-    // ── Renderizar página paginada ──
     function renderPage(page) {
       State.archivePage = page;
       list.innerHTML = '';
@@ -540,7 +466,6 @@ async function initArchive() {
       if (paginationEl) paginationEl.hidden = totalPages <= 1;
     }
 
-    // ── Renderizar resultados de pesquisa ──
     function renderSearchResults(results) {
       list.innerHTML = '';
 
@@ -560,12 +485,10 @@ async function initArchive() {
         searchInfo.textContent = `${results.length} resultado${results.length !== 1 ? 's' : ''} encontrado${results.length !== 1 ? 's' : ''}`;
       }
 
-      // Esconde paginação durante pesquisa
       const paginationEl = $('#archive-pagination');
       if (paginationEl) paginationEl.hidden = true;
     }
 
-    // ── Evento de pesquisa ──
     if (searchInput) {
       searchInput.addEventListener('input', () => {
         const q = searchInput.value.trim();
@@ -598,7 +521,6 @@ async function initArchive() {
 
 // ── Init — Personagens (personagens.html) ──
 async function initPersonagens() {
-  initCursor();
   updateHeaderDateline();
 
   const grid    = $('#characters-grid');
@@ -624,7 +546,6 @@ async function initPersonagens() {
     }
 
     personagens.forEach(p => {
-      // Card como link para a página wiki do personagem
       const card = document.createElement('a');
       card.className = 'character-card';
       card.href = `personagem.html?id=${p.id}`;
@@ -660,7 +581,6 @@ async function initPersonagens() {
 
 // ── Init — Personagem individual (personagem.html) ──
 async function initPersonagem() {
-  initCursor();
   initImageProtection();
   updateHeaderDateline();
 
@@ -668,7 +588,6 @@ async function initPersonagem() {
   const contentEl  = $('#personagem-content');
   const notFoundEl = $('#personagem-not-found');
 
-  // Lê o id da URL (?id=1)
   const params = new URLSearchParams(window.location.search);
   const id = parseInt(params.get('id'), 10);
 
@@ -690,10 +609,8 @@ async function initPersonagem() {
       return;
     }
 
-    // Atualiza o título da página
     document.title = `${p.nome} — Tirinhas`;
 
-    // Popula os campos
     const nomeEl     = $('#personagem-nome');
     const apelidoEl  = $('#personagem-apelido');
     const descEl     = $('#personagem-descricao');
@@ -704,7 +621,6 @@ async function initPersonagem() {
 
     if (nomeEl)    nomeEl.textContent   = p.nome;
     if (apelidoEl) apelidoEl.textContent = p.apelido || '';
-
     if (descEl)    descEl.textContent = p.descricao || '';
 
     if (traitsEl) {
@@ -721,7 +637,6 @@ async function initPersonagem() {
       debutEl.innerHTML = `1ª aparição: <a href="index.html#tirinha-${p.primeira_aparicao}">tirinha #${p.primeira_aparicao}</a>`;
     }
 
-    // Imagem do personagem
     if (imgCol) {
       if (p.imagem && !p.imagem.includes('placeholder')) {
         const img = document.createElement('img');
