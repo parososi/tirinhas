@@ -1,9 +1,9 @@
 /* =============================================
    TIRINHAS — CSS
-   Minimalista · Preto & Branco · Animado
+   Estilo Jornal · Anos 1950 · Preto & Branco
    ============================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400;0,700;1,400;1,700&family=Permanent+Marker&display=swap');
 
 /* ── Reset & Base ── */
 *, *::before, *::after {
@@ -12,53 +12,73 @@
   padding: 0;
 }
 
+/* Garantia que hidden sempre funciona */
+[hidden] { display: none !important; }
+
 :root {
-  --bg: #fafaf8;
-  --ink: #0a0a0a;
-  --ink-light: #3a3a38;
-  --border: 2px solid #0a0a0a;
-  --radius: 2px;
-  --font-title: 'Permanent Marker', cursive;
-  --font-serif: 'Playfair Display', Georgia, serif;
-  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
-  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  --bg: #f5f0e4;
+  --bg-white: #faf8f2;
+  --ink: #111008;
+  --ink-mid: #3a3020;
+  --ink-light: #6b5f4a;
+  --border: 2px solid var(--ink);
+  --border-thin: 1px solid var(--ink);
+  --radius: 0;
+  --font-masthead: 'Permanent Marker', cursive;
+  --font-body: 'Arimo', Arial, Helvetica, sans-serif;
+  --transition: 0.15s ease;
 }
 
 html {
   font-size: 16px;
-  scroll-behavior: smooth;
 }
 
 body {
   background-color: var(--bg);
   color: var(--ink);
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   line-height: 1.6;
   min-height: 100vh;
   overflow-x: hidden;
   cursor: none;
 }
 
+/* Textura sutil de papel */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 28px,
+      rgba(0,0,0,0.018) 28px,
+      rgba(0,0,0,0.018) 29px
+    );
+  pointer-events: none;
+  z-index: 0;
+}
+
 /* ── Cursor customizado ── */
 #cursor {
   position: fixed;
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   background: var(--ink);
   border-radius: 50%;
   pointer-events: none;
   z-index: 9999;
   transform: translate(-50%, -50%);
-  transition: transform 0.1s ease, width 0.2s ease, height 0.2s ease;
-  mix-blend-mode: multiply;
+  transition: width 0.1s ease, height 0.1s ease;
 }
 
 #cursor.expanded {
-  width: 28px;
-  height: 28px;
+  width: 22px;
+  height: 22px;
   background: transparent;
   border: 2px solid var(--ink);
+  border-radius: 50%;
 }
 
 @media (hover: none) {
@@ -72,92 +92,104 @@ body {
   color: var(--bg);
 }
 
-/* ── Header ── */
+/* ── Header / Masthead ── */
 .site-header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 100;
+  background: var(--bg);
+  border-bottom: var(--border);
+}
+
+/* Linha decorativa acima do masthead */
+.site-header::before {
+  content: '';
+  display: block;
+  height: 4px;
+  background: var(--ink);
+}
+
+.header-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.25rem 2.5rem;
-  background: var(--bg);
-  border-bottom: var(--border);
-  animation: slideDown 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
-}
-
-@keyframes slideDown {
-  from { transform: translateY(-100%); }
-  to   { transform: translateY(0); }
+  padding: 0.75rem 2rem;
+  border-bottom: var(--border-thin);
 }
 
 .site-logo {
-  font-family: var(--font-title);
-  font-size: 1.75rem;
+  font-family: var(--font-masthead);
+  font-size: 1.8rem;
   color: var(--ink);
   text-decoration: none;
-  letter-spacing: -0.02em;
-  transition: opacity var(--transition);
+  letter-spacing: -0.01em;
+  line-height: 1;
 }
 
-.site-logo:hover { opacity: 0.65; }
+.site-logo:hover { opacity: 0.7; }
 
 .site-nav {
   display: flex;
-  gap: 0.25rem;
+  gap: 0;
   align-items: center;
 }
 
 .nav-link {
-  position: relative;
   display: inline-block;
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  font-weight: 500;
-  letter-spacing: 0.1em;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   text-decoration: none;
   color: var(--ink);
-  padding: 0.5rem 1rem;
+  padding: 0.45rem 0.9rem;
   border: var(--border);
-  overflow: hidden;
-  transition: color var(--transition);
-}
-
-.nav-link::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--ink);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform var(--transition);
-  z-index: -1;
-}
-
-.nav-link:hover::before,
-.nav-link.active::before {
-  transform: scaleX(1);
+  margin-left: -2px;
+  transition: background var(--transition), color var(--transition);
 }
 
 .nav-link:hover,
 .nav-link.active {
+  background: var(--ink);
   color: var(--bg);
+}
+
+/* Linha de data/subtítulo abaixo do header */
+.header-dateline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.2rem 2rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: var(--ink-light);
+  text-transform: uppercase;
+}
+
+.header-dateline-rule {
+  flex: 1;
+  height: 1px;
+  background: var(--ink-light);
+  margin: 0 0.75rem;
+  opacity: 0.4;
 }
 
 /* ── Conteúdo Principal ── */
 .main-content {
-  padding-top: 5rem;
+  padding-top: 6.5rem;
   min-height: 100vh;
+  position: relative;
+  z-index: 1;
 }
 
 /* ── Leitor de Tirinha ── */
 .comic-reader {
-  max-width: 1100px;
+  max-width: 960px;
   margin: 0 auto;
-  padding: 3rem 2rem 5rem;
+  padding: 2.5rem 2rem 5rem;
 }
 
 /* Cabeçalho da tirinha */
@@ -166,55 +198,36 @@ body {
   align-items: baseline;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 1.25rem;
-  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
   border-bottom: var(--border);
-  opacity: 0;
-  animation: fadeUp 0.5s ease 0.4s both;
 }
 
 .comic-title {
-  font-family: var(--font-serif);
-  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-family: var(--font-body);
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
   font-weight: 700;
   line-height: 1.2;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 
 .comic-date {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
   color: var(--ink-light);
   white-space: nowrap;
   flex-shrink: 0;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-/* Wrapper da imagem da tirinha */
+/* Frame da tirinha */
 .comic-frame {
   position: relative;
   border: var(--border);
   overflow: hidden;
-  background: #fff;
-  animation: stamp 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
-}
-
-@keyframes stamp {
-  from {
-    transform: scale(0.93) rotate(-0.6deg);
-    opacity: 0;
-    box-shadow: 0 0 0 0 var(--ink);
-  }
-  to {
-    transform: scale(1) rotate(0deg);
-    opacity: 1;
-    box-shadow: 5px 5px 0 0 var(--ink);
-  }
-}
-
-.comic-frame:hover {
-  box-shadow: 3px 3px 0 0 var(--ink);
-  transition: box-shadow 0.15s ease;
+  background: var(--bg-white);
+  box-shadow: 4px 4px 0 0 var(--ink);
 }
 
 .comic-frame img,
@@ -223,21 +236,20 @@ body {
   display: block;
   width: 100%;
   height: auto;
-  max-height: 70vh;
+  max-height: 68vh;
   object-fit: contain;
 }
 
 /* Comentário do autor */
 .comic-comment {
-  margin-top: 1.25rem;
-  padding: 1rem 1.25rem;
+  margin-top: 1rem;
+  padding: 0.85rem 1.1rem;
   border-left: 3px solid var(--ink);
-  font-family: var(--font-serif);
+  font-family: var(--font-body);
   font-style: italic;
-  font-size: 0.95rem;
-  color: var(--ink-light);
-  opacity: 0;
-  animation: fadeUp 0.5s ease 0.6s both;
+  font-size: 0.9rem;
+  color: var(--ink-mid);
+  background: rgba(0,0,0,0.03);
 }
 
 /* Navegação prev/next */
@@ -245,225 +257,373 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 2.5rem;
+  margin-top: 2rem;
   gap: 1rem;
-  opacity: 0;
-  animation: fadeUp 0.5s ease 0.7s both;
 }
 
 .nav-btn {
-  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  font-weight: 500;
-  letter-spacing: 0.08em;
+  gap: 0.5rem;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  text-decoration: none;
   color: var(--ink);
-  padding: 0.7rem 1.25rem;
+  padding: 0.55rem 1.1rem;
   border: var(--border);
   background: transparent;
   cursor: none;
-  overflow: hidden;
-  transition: color var(--transition);
+  transition: background var(--transition), color var(--transition);
 }
 
-.nav-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
+.nav-btn:hover {
   background: var(--ink);
-  transform: scaleX(0);
-  transition: transform var(--transition);
-  z-index: -1;
+  color: var(--bg);
 }
-
-.nav-btn.prev::before { transform-origin: right; }
-.nav-btn.next::before { transform-origin: left; }
-
-.nav-btn:hover::before { transform: scaleX(1); }
-.nav-btn:hover { color: var(--bg); }
 
 .nav-btn:disabled,
 .nav-btn.disabled {
-  opacity: 0.25;
+  opacity: 0.3;
   pointer-events: none;
 }
 
-.nav-btn .arrow { font-size: 1.1rem; }
+.nav-btn .arrow { font-size: 1rem; }
 
 .comic-counter {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
   color: var(--ink-light);
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 /* ── Animações de transição entre tirinhas ── */
 .comic-frame.slide-out-left {
-  animation: slideOutLeft 0.35s cubic-bezier(0.4, 0, 1, 1) both;
+  animation: slideOutLeft 0.2s ease both;
 }
 .comic-frame.slide-out-right {
-  animation: slideOutRight 0.35s cubic-bezier(0.4, 0, 1, 1) both;
+  animation: slideOutRight 0.2s ease both;
 }
 .comic-frame.slide-in-left {
-  animation: slideInLeft 0.45s cubic-bezier(0, 0, 0.2, 1) both;
+  animation: slideInLeft 0.2s ease both;
 }
 .comic-frame.slide-in-right {
-  animation: slideInRight 0.45s cubic-bezier(0, 0, 0.2, 1) both;
+  animation: slideInRight 0.2s ease both;
 }
 
 @keyframes slideOutLeft {
-  to { transform: translateX(-8%) scale(0.97); opacity: 0; }
+  to { transform: translateX(-6%); opacity: 0; }
 }
 @keyframes slideOutRight {
-  to { transform: translateX(8%) scale(0.97); opacity: 0; }
+  to { transform: translateX(6%); opacity: 0; }
 }
 @keyframes slideInLeft {
-  from { transform: translateX(6%) scale(0.97); opacity: 0; }
-  to   { transform: translateX(0) scale(1);    opacity: 1; }
+  from { transform: translateX(5%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
 }
 @keyframes slideInRight {
-  from { transform: translateX(-6%) scale(0.97); opacity: 0; }
-  to   { transform: translateX(0) scale(1);     opacity: 1; }
+  from { transform: translateX(-5%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
 }
 
 .comic-header.fade-update,
 .comic-comment.fade-update {
-  animation: fadeRefresh 0.4s ease both;
+  animation: fadeRefresh 0.2s ease both;
 }
 
 @keyframes fadeRefresh {
-  0%  { opacity: 0; transform: translateY(6px); }
-  100%{ opacity: 1; transform: translateY(0); }
-}
-
-/* ── Utilitários de animação ── */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
+  from { opacity: 0.3; }
   to   { opacity: 1; }
 }
 
 /* ── Página de Arquivo ── */
 .archive-page {
-  max-width: 1100px;
+  max-width: 960px;
   margin: 0 auto;
-  padding: 3rem 2rem 5rem;
+  padding: 2.5rem 2rem 5rem;
 }
 
-.archive-header {
-  margin-bottom: 2.5rem;
-  padding-bottom: 1rem;
+.page-header {
+  margin-bottom: 2rem;
+  padding-bottom: 0.75rem;
   border-bottom: var(--border);
-  animation: fadeUp 0.5s ease 0.2s both;
-  opacity: 0;
 }
 
-.archive-header h1 {
-  font-family: var(--font-serif);
-  font-size: clamp(1.75rem, 5vw, 3rem);
+.page-header h1 {
+  font-family: var(--font-body);
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
 }
 
-.archive-subtitle {
-  margin-top: 0.5rem;
-  font-size: 0.8rem;
+.page-subtitle {
+  margin-top: 0.3rem;
+  font-size: 0.72rem;
   color: var(--ink-light);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
-/* Grid de arquivo */
-.archive-grid {
+/* Lista de arquivo — estilo jornal (não grid) */
+.archive-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.archive-item {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
-}
-
-.archive-card {
-  display: block;
+  grid-template-columns: 180px 1fr auto;
+  gap: 0;
   text-decoration: none;
   color: var(--ink);
-  border: var(--border);
+  border-bottom: var(--border-thin);
+  background: var(--bg-white);
+  transition: background var(--transition);
   overflow: hidden;
-  position: relative;
-  background: #fff;
-  opacity: 0;
-  transform: translateY(24px);
-  transition: box-shadow var(--transition), transform var(--transition);
-  /* animação de entrada controlada por JS (stagger) */
 }
 
-.archive-card.visible {
-  animation: cardReveal 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+.archive-item:first-child {
+  border-top: var(--border-thin);
 }
 
-@keyframes cardReveal {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
+.archive-item:hover {
+  background: var(--ink);
+  color: var(--bg);
 }
 
-.archive-card:hover {
-  box-shadow: 5px 5px 0 0 var(--ink);
-  transform: translate(-2px, -2px);
-}
-
-.archive-card-img {
-  width: 100%;
-  aspect-ratio: 3 / 1;
+.archive-item-img {
+  width: 180px;
+  height: 70px;
   overflow: hidden;
-  border-bottom: var(--border);
+  flex-shrink: 0;
+  border-right: var(--border-thin);
 }
 
-.archive-card-img img,
-.archive-card-img object {
+.archive-item-img img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform var(--transition-slow);
+  transition: opacity var(--transition);
 }
 
-.archive-card:hover .archive-card-img img,
-.archive-card:hover .archive-card-img object {
-  transform: scale(1.04);
+.archive-item:hover .archive-item-img img {
+  opacity: 0.15;
+  mix-blend-mode: multiply;
 }
 
-.archive-card-body {
+.archive-item-body {
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+
+.archive-item-title {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.archive-item-date {
+  font-size: 0.65rem;
+  color: var(--ink-light);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 0.2rem;
+}
+
+.archive-item:hover .archive-item-date {
+  color: rgba(245, 240, 228, 0.65);
+}
+
+.archive-item-num {
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  font-size: 0.65rem;
+  color: var(--ink-light);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  border-left: var(--border-thin);
+  font-weight: 700;
+}
+
+.archive-item:hover .archive-item-num {
+  color: rgba(245, 240, 228, 0.65);
+  border-left-color: rgba(245, 240, 228, 0.3);
+}
+
+/* Paginação do arquivo */
+.archive-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-top: 2.5rem;
+}
+
+.pagination-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  padding: 0.5rem 1rem;
+  border: var(--border);
+  background: transparent;
+  cursor: none;
+  transition: background var(--transition), color var(--transition);
+  margin-left: -2px;
+}
+
+.pagination-btn:first-child { margin-left: 0; }
+
+.pagination-btn:hover {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.pagination-btn:disabled,
+.pagination-btn.disabled {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.pagination-info {
+  font-size: 0.7rem;
+  color: var(--ink-light);
+  padding: 0.5rem 1.25rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: var(--border);
+  margin-left: -2px;
+  background: var(--bg-white);
+}
+
+/* ── Página de Personagens ── */
+.characters-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem 5rem;
+}
+
+.characters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0;
+  border-top: var(--border);
+  border-left: var(--border);
+}
+
+.character-card {
+  border-right: var(--border);
+  border-bottom: var(--border);
+  background: var(--bg-white);
+  padding: 0;
+  overflow: hidden;
+}
+
+.character-card-img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-bottom: var(--border);
+  background: #e8e2d4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.character-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Placeholder quando sem imagem própria */
+.character-card-img .char-placeholder {
+  font-size: 3.5rem;
+  opacity: 0.2;
+  user-select: none;
+}
+
+.character-card-body {
   padding: 1rem;
 }
 
-.archive-card-title {
-  font-family: var(--font-serif);
-  font-size: 1.05rem;
+.character-name {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
   font-weight: 700;
-  line-height: 1.3;
-  margin-bottom: 0.35rem;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
 }
 
-.archive-card-date {
-  font-size: 0.72rem;
-  color: var(--ink-light);
-  letter-spacing: 0.08em;
-}
-
-.archive-card-num {
-  position: absolute;
-  top: 0.6rem;
-  right: 0.75rem;
+.character-alias {
   font-size: 0.65rem;
-  font-family: var(--font-mono);
   color: var(--ink-light);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 0.15rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.6rem;
+  border-bottom: var(--border-thin);
 }
+
+.character-desc {
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--ink-mid);
+  margin-bottom: 0.9rem;
+}
+
+.character-traits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-bottom: 0.9rem;
+}
+
+.character-trait {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border: var(--border-thin);
+  color: var(--ink-mid);
+}
+
+.character-debut {
+  font-size: 0.65rem;
+  color: var(--ink-light);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.character-debut a {
+  color: var(--ink);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.character-debut a:hover { opacity: 0.6; }
 
 /* ── Loading state ── */
 .loading-state {
@@ -471,17 +631,18 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 6rem 2rem;
-  gap: 1.5rem;
+  padding: 5rem 2rem;
+  gap: 1.25rem;
 }
 
+/* Spinner estilo "impressora" — simples e rápido */
 .ink-loader {
-  width: 48px;
-  height: 48px;
+  width: 32px;
+  height: 32px;
   border: 3px solid var(--ink);
   border-top-color: transparent;
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  animation: spin 0.6s linear infinite;
 }
 
 @keyframes spin {
@@ -489,28 +650,23 @@ body {
 }
 
 .loading-text {
-  font-size: 0.75rem;
-  letter-spacing: 0.15em;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--ink-light);
-  animation: pulse 1.5s ease infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 0.4; }
-  50%       { opacity: 1; }
 }
 
 /* ── Error state ── */
 .error-state {
   text-align: center;
-  padding: 6rem 2rem;
+  padding: 5rem 2rem;
 }
 
 .error-state h2 {
-  font-family: var(--font-serif);
-  font-size: 2rem;
-  margin-bottom: 1rem;
+  font-family: var(--font-body);
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
 }
 
 .error-state p {
@@ -521,60 +677,63 @@ body {
 /* ── Footer ── */
 .site-footer {
   border-top: var(--border);
-  padding: 1.25rem 2.5rem;
+  padding: 1rem 2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 0.72rem;
+  font-size: 0.65rem;
   color: var(--ink-light);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 1;
 }
 
 .footer-back {
   text-decoration: none;
   color: var(--ink);
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  transition: opacity var(--transition);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .footer-back:hover { opacity: 0.55; }
 
 /* ── Responsivo ── */
 @media (max-width: 768px) {
-  .site-header {
-    padding: 1rem 1.25rem;
+  .site-logo { font-size: 1.4rem; }
+
+  .header-inner {
+    padding: 0.6rem 1.25rem;
   }
 
-  .site-logo {
-    font-size: 1.35rem;
+  .header-dateline {
+    padding: 0.2rem 1.25rem;
+    font-size: 0.6rem;
   }
 
-  .nav-link {
-    font-size: 0.7rem;
-    padding: 0.4rem 0.7rem;
+  .main-content {
+    padding-top: 6rem;
   }
 
   .comic-reader,
-  .archive-page {
-    padding: 2rem 1.25rem 4rem;
+  .archive-page,
+  .characters-page {
+    padding: 1.75rem 1.25rem 4rem;
   }
 
   .comic-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.4rem;
+    gap: 0.25rem;
   }
 
-  .comic-nav {
-    flex-wrap: wrap;
-    gap: 0.75rem;
-  }
+  .comic-nav { gap: 0.5rem; }
 
   .nav-btn {
-    font-size: 0.72rem;
-    padding: 0.6rem 1rem;
+    font-size: 0.65rem;
+    padding: 0.5rem 0.85rem;
   }
 
   .comic-counter {
@@ -583,23 +742,38 @@ body {
     order: -1;
   }
 
-  .archive-grid {
-    grid-template-columns: 1fr;
+  .archive-item {
+    grid-template-columns: 100px 1fr;
+  }
+
+  .archive-item-img {
+    width: 100px;
+    height: 60px;
+  }
+
+  .archive-item-num {
+    display: none;
+  }
+
+  .characters-grid {
+    grid-template-columns: 1fr 1fr;
   }
 
   .site-footer {
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.4rem;
     text-align: center;
-    padding: 1rem 1.25rem;
+    padding: 0.75rem 1.25rem;
   }
 }
 
 @media (max-width: 480px) {
-  .main-content { padding-top: 4.5rem; }
+  .main-content { padding-top: 5.5rem; }
 
-  .comic-title {
-    font-size: 1.4rem;
+  .nav-link {
+    font-size: 0.6rem;
+    padding: 0.35rem 0.6rem;
+    letter-spacing: 0.06em;
   }
 
   .nav-btn span:not(.arrow) {
@@ -607,12 +781,26 @@ body {
   }
 
   .nav-btn {
-    padding: 0.65rem 1rem;
+    padding: 0.55rem 0.85rem;
+  }
+
+  .archive-item {
+    grid-template-columns: 80px 1fr;
+  }
+
+  .archive-item-img {
+    width: 80px;
+    height: 56px;
+  }
+
+  .characters-grid {
+    grid-template-columns: 1fr;
   }
 }
 
 /* ── Tema de impressão ── */
 @media print {
+  body::before,
   .site-header,
   .comic-nav,
   .site-footer,
@@ -636,5 +824,6 @@ body {
   .ink-loader {
     border-top-color: var(--ink);
     opacity: 0.4;
+    animation: none;
   }
 }

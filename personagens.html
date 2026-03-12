@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Arquivo de todas as tirinhas publicadas.">
-  <title>Arquivo — Tirinhas</title>
+  <meta name="description" content="Conheça os personagens das Tirinhas.">
+  <title>Personagens — Tirinhas</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400;0,700;1,400;1,700&family=Permanent+Marker&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body data-page="archive">
+<body data-page="personagens">
 
   <!-- Cursor customizado -->
   <div id="cursor" aria-hidden="true"></div>
@@ -22,8 +22,8 @@
         Tirinhas
       </a>
       <nav class="site-nav" aria-label="Navegação principal">
-        <a href="personagens.html" class="nav-link">Personagens</a>
-        <a href="arquivo.html" class="nav-link active" aria-current="page">Arquivo</a>
+        <a href="personagens.html" class="nav-link active" aria-current="page">Personagens</a>
+        <a href="arquivo.html" class="nav-link">Arquivo</a>
       </nav>
     </div>
     <div class="header-dateline">
@@ -35,35 +35,24 @@
 
   <!-- ── Conteúdo principal ── -->
   <main class="main-content">
-    <div class="archive-page">
+    <div class="characters-page">
 
       <!-- Cabeçalho da página -->
       <div class="page-header">
-        <h1>Arquivo</h1>
-        <p class="page-subtitle" id="archive-total"></p>
+        <h1>Personagens</h1>
+        <p class="page-subtitle" id="characters-total"></p>
       </div>
 
       <!-- Loading -->
-      <div id="archive-loading" class="loading-state" role="status" aria-live="polite">
+      <div id="characters-loading" class="loading-state" role="status" aria-live="polite">
         <div class="ink-loader" aria-hidden="true"></div>
-        <span class="loading-text">Carregando arquivo...</span>
+        <span class="loading-text">Carregando personagens...</span>
       </div>
 
-      <!-- Lista de tirinhas -->
-      <div id="archive-list" class="archive-list" aria-label="Todas as tirinhas"></div>
+      <!-- Grid de personagens -->
+      <div id="characters-grid" class="characters-grid" aria-label="Personagens das tirinhas"></div>
 
-      <!-- Paginação -->
-      <div id="archive-pagination" class="archive-pagination" hidden>
-        <button type="button" id="page-prev" class="pagination-btn disabled" aria-label="Página anterior">
-          ← Anterior
-        </button>
-        <span id="page-info" class="pagination-info">Pág. 1 / 1</span>
-        <button type="button" id="page-next" class="pagination-btn" aria-label="Próxima página">
-          Próxima →
-        </button>
-      </div>
-
-    </div><!-- /.archive-page -->
+    </div><!-- /.characters-page -->
   </main>
 
   <!-- ── Footer ── -->

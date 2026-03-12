@@ -48,5 +48,43 @@
       "imagem": "tirinhas/placeholder.svg",
       "alt": "Tirinha mais recente"
     }
+  ],
+  "personagens": [
+    {
+      "id": 1,
+      "nome": "Zé",
+      "apelido": "O Protagonista",
+      "descricao": "Homem comum, de bom coração e cabeça quente. Tem sempre uma ideia nova — e quase sempre a executa do jeito errado. No fundo, aprende com tudo.",
+      "caracteristicas": ["Otimista", "Atrapalhado", "Bem-intencionado", "Teimoso"],
+      "primeira_aparicao": 1,
+      "imagem": "tirinhas/placeholder.svg"
+    },
+    {
+      "id": 2,
+      "nome": "A Vizinha",
+      "apelido": "A Voz da Razão",
+      "descricao": "Mora ao lado do Zé há décadas. Viu de tudo e já não se surpreende com nada. Sua sabedoria vem menos dos livros e mais das janelas que olhou durante anos.",
+      "caracteristicas": ["Sábia", "Direta", "Observadora", "Irônica"],
+      "primeira_aparicao": 2,
+      "imagem": "tirinhas/placeholder.svg"
+    },
+    {
+      "id": 3,
+      "nome": "O Chefe",
+      "apelido": "O Mandão Confuso",
+      "descricao": "Ocupa a cadeira de chefia há muito tempo, mas ninguém sabe bem como chegou lá. Faz reuniões longas, dá ordens contraditórias e acredita que está sempre certo.",
+      "caracteristicas": ["Autoritário", "Confuso", "Pomposo", "Inseguro"],
+      "primeira_aparicao": 3,
+      "imagem": "tirinhas/placeholder.svg"
+    },
+    {
+      "id": 4,
+      "nome": "Tulipa",
+      "apelido": "A Amiga Fiel",
+      "descricao": "Amiga de longa data do Zé. Prática e sem rodeios, tem o dom de resolver em dois minutos os problemas que Zé cria em horas. Coleciona soluções simples para problemas complicados.",
+      "caracteristicas": ["Prática", "Leal", "Perspicaz", "Impaciente"],
+      "primeira_aparicao": 4,
+      "imagem": "tirinhas/placeholder.svg"
+    }
   ]
 }
