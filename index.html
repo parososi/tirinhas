@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Tirinhas — quadrinhos autorais publicados dia sim, dia não.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Tirinhas">
+  <meta property="og:description" content="Quadrinhos autorais publicados dia sim, dia não.">
+  <title>Tirinhas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="reader">
+
+  <!-- Cursor customizado -->
+  <div id="cursor" aria-hidden="true"></div>
+
+  <!-- ── Header ── -->
+  <header class="site-header" role="banner">
+    <a href="index.html" class="site-logo" aria-label="Ir para a tirinha mais recente">
+      Tirinhas
+    </a>
+    <nav class="site-nav" aria-label="Navegação principal">
+      <a href="arquivo.html" class="nav-link">Arquivo</a>
+    </nav>
+  </header>
+
+  <!-- ── Conteúdo principal ── -->
+  <main class="main-content">
+    <div class="comic-reader">
+
+      <!-- Estado de loading -->
+      <div id="loading-state" class="loading-state" role="status" aria-live="polite">
+        <div class="ink-loader" aria-hidden="true"></div>
+        <span class="loading-text">Carregando...</span>
+      </div>
+
+      <!-- Estado de erro -->
+      <div id="error-state" class="error-state" hidden>
+        <h2>Ops.</h2>
+        <p>Não foi possível carregar as tirinhas.</p>
+      </div>
+
+      <!-- Leitor de tirinha -->
+      <div id="comic-reader-content" hidden>
+
+        <!-- Cabeçalho: título + data -->
+        <div class="comic-header">
+          <h1 class="comic-title" id="comic-title"></h1>
+          <time class="comic-date" id="comic-date" aria-label="Data de publicação"></time>
+        </div>
+
+        <!-- Frame da tirinha -->
+        <div class="comic-frame" id="comic-frame" role="img" aria-labelledby="comic-title">
+          <!-- imagem inserida via JS -->
+        </div>
+
+        <!-- Comentário do autor -->
+        <blockquote class="comic-comment" id="comic-comment" hidden></blockquote>
+
+        <!-- Navegação -->
+        <nav class="comic-nav" aria-label="Navegação entre tirinhas">
+          <button
+            type="button"
+            id="btn-prev"
+            class="nav-btn prev disabled"
+            aria-label="Tirinha anterior"
+            aria-disabled="true"
+          >
+            <span class="arrow" aria-hidden="true">←</span>
+            <span>Anterior</span>
+          </button>
+
+          <span class="comic-counter" id="comic-counter" aria-live="polite"></span>
+
+          <button
+            type="button"
+            id="btn-next"
+            class="nav-btn next disabled"
+            aria-label="Próxima tirinha"
+            aria-disabled="true"
+          >
+            <span>Próxima</span>
+            <span class="arrow" aria-hidden="true">→</span>
+          </button>
+        </nav>
+
+      </div><!-- /#comic-reader-content -->
+
+    </div><!-- /.comic-reader -->
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer class="site-footer" role="contentinfo">
+    <span>dia sim, dia não.</span>
+    <a href="arquivo.html" class="footer-back">ver arquivo →</a>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

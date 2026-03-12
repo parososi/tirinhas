@@ -1,0 +1,52 @@
+{
+  "tirinhas": [
+    {
+      "id": 1,
+      "titulo": "O começo de tudo",
+      "data": "2026-03-01",
+      "comentario": "Esta é a primeira tirinha da série. Tudo começa com uma ideia simples.",
+      "imagem": "tirinhas/placeholder.svg",
+      "alt": "Tirinha de exemplo com três painéis mostrando um personagem em ação"
+    },
+    {
+      "id": 2,
+      "titulo": "Um dia qualquer",
+      "data": "2026-03-03",
+      "comentario": "",
+      "imagem": "tirinhas/placeholder.svg",
+      "alt": "Tirinha de exemplo com três painéis"
+    },
+    {
+      "id": 3,
+      "titulo": "A grande descoberta",
+      "data": "2026-03-05",
+      "comentario": "Às vezes as maiores descobertas acontecem nos menores momentos.",
+      "imagem": "tirinhas/placeholder.svg",
+      "alt": "Tirinha de exemplo mostrando uma descoberta surpreendente"
+    },
+    {
+      "id": 4,
+      "titulo": "Tarde de sol",
+      "data": "2026-03-07",
+      "comentario": "",
+      "imagem": "tirinhas/placeholder.svg",
+      "alt": "Tirinha de exemplo em uma tarde ensolarada"
+    },
+    {
+      "id": 5,
+      "titulo": "A pergunta sem resposta",
+      "data": "2026-03-10",
+      "comentario": "Desenhei essa tirinha pensando naquelas perguntas que ficam na cabeça por dias.",
+      "imagem": "tirinhas/placeholder.svg",
+      "alt": "Tirinha de exemplo com três painéis sobre uma questão filosófica"
+    },
+    {
+      "id": 6,
+      "titulo": "Hoje",
+      "data": "2026-03-12",
+      "comentario": "",
+      "imagem": "tirinhas/placeholder.svg",
+      "alt": "Tirinha mais recente"
+    }
+  ]
+}
