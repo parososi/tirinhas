@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Perfil do personagem — Tirinhas.">
+  <title>Personagem — Tirinhas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400;0,700;1,400;1,700&family=Permanent+Marker&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="personagem">
+
+  <!-- Cursor customizado -->
+  <div id="cursor" aria-hidden="true"></div>
+
+  <!-- ── Header / Masthead ── -->
+  <header class="site-header" role="banner">
+    <div class="header-inner">
+      <a href="index.html" class="site-logo" aria-label="Ir para a tirinha mais recente">
+        Tirinhas
+      </a>
+      <nav class="site-nav" aria-label="Navegação principal">
+        <a href="personagens.html" class="nav-link active" aria-current="page">Personagens</a>
+        <a href="arquivo.html" class="nav-link">Arquivo</a>
+      </nav>
+    </div>
+    <div class="header-dateline">
+      <span id="header-date"></span>
+      <span class="header-dateline-rule"></span>
+      <span>dia sim, dia não</span>
+    </div>
+  </header>
+
+  <!-- ── Conteúdo principal ── -->
+  <main class="main-content">
+    <div class="personagem-page">
+
+      <!-- Botão voltar -->
+      <a href="personagens.html" class="personagem-back" aria-label="Voltar para personagens">
+        ← Personagens
+      </a>
+
+      <!-- Loading -->
+      <div id="personagem-loading" class="loading-state" role="status" aria-live="polite">
+        <div class="ink-loader" aria-hidden="true"></div>
+        <span class="loading-text">Carregando...</span>
+      </div>
+
+      <!-- Conteúdo do personagem -->
+      <div id="personagem-content" hidden>
+
+        <!-- Layout: imagem | info -->
+        <div class="personagem-layout">
+
+          <!-- Coluna de imagem -->
+          <div class="personagem-img-col" id="personagem-img-col">
+            <!-- imagem inserida via JS -->
+          </div>
+
+          <!-- Coluna de informações -->
+          <div class="personagem-info-col">
+
+            <div class="personagem-nome" id="personagem-nome"></div>
+            <div class="personagem-apelido" id="personagem-apelido"></div>
+
+            <div class="personagem-section-label">Sobre o personagem</div>
+            <p class="personagem-descricao" id="personagem-descricao"></p>
+
+            <div class="personagem-section-label">Características</div>
+            <div class="personagem-traits" id="personagem-traits"></div>
+
+            <div class="personagem-hashtag" id="personagem-hashtag"></div>
+
+            <div class="personagem-debut" id="personagem-debut"></div>
+
+          </div><!-- /.personagem-info-col -->
+        </div><!-- /.personagem-layout -->
+
+      </div><!-- /#personagem-content -->
+
+      <!-- Not found -->
+      <div id="personagem-not-found" class="personagem-not-found" hidden>
+        <h2>Personagem não encontrado.</h2>
+        <p><a href="personagens.html">← ver todos os personagens</a></p>
+      </div>
+
+    </div><!-- /.personagem-page -->
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer class="site-footer" role="contentinfo">
+    <span>dia sim, dia não.</span>
+    <a href="personagens.html" class="footer-back">← personagens</a>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
