@@ -4,19 +4,29 @@
       "id": 1,
       "titulo": "O começo de tudo",
       "data": "2026-03-01",
-      "comentario": "Esta é a primeira tirinha da série. Tudo começa com uma ideia simples.",
+      "comentario": "A primeira tirinha. Humberto aparece sem ter pedido para aparecer — como sempre.",
       "imagem": "tirinhas/placeholder.svg",
-      "alt": "Tirinha de exemplo com três painéis mostrando um personagem em ação",
-      "hashtags": ["#ze"]
+      "quadros": [
+        "tirinhas/placeholder.svg",
+        "tirinhas/placeholder.svg",
+        "tirinhas/placeholder.svg"
+      ],
+      "alt": "Tirinha em três quadros: Humberto, o garoto de cabelo espiral, olha para o horizonte vazio",
+      "hashtags": ["#humberto"]
     },
     {
       "id": 2,
-      "titulo": "Um dia qualquer",
+      "titulo": "Mick Jagger tem razão",
       "data": "2026-03-03",
       "comentario": "",
       "imagem": "tirinhas/placeholder.svg",
-      "alt": "Tirinha de exemplo com três painéis",
-      "hashtags": ["#ze", "#vizinha"]
+      "quadros": [
+        "tirinhas/placeholder.svg",
+        "tirinhas/placeholder.svg",
+        "tirinhas/placeholder.svg"
+      ],
+      "alt": "Mick Jagger, de chapéu empilhado, explica algo óbvio para Humberto que não entende",
+      "hashtags": ["#humberto", "#mickjagger"]
     },
     {
       "id": 3,
@@ -24,8 +34,13 @@
       "data": "2026-03-05",
       "comentario": "Às vezes as maiores descobertas acontecem nos menores momentos.",
       "imagem": "tirinhas/placeholder.svg",
-      "alt": "Tirinha de exemplo mostrando uma descoberta surpreendente",
-      "hashtags": ["#ze", "#chefe"]
+      "quadros": [
+        "tirinhas/placeholder.svg",
+        "tirinhas/placeholder.svg",
+        "tirinhas/placeholder.svg"
+      ],
+      "alt": "Humberto faz uma descoberta surpreendente em três quadros",
+      "hashtags": ["#humberto"]
     },
     {
       "id": 4,
@@ -33,8 +48,12 @@
       "data": "2026-03-07",
       "comentario": "",
       "imagem": "tirinhas/placeholder.svg",
-      "alt": "Tirinha de exemplo em uma tarde ensolarada",
-      "hashtags": ["#ze", "#tulipa"]
+      "quadros": [
+        "tirinhas/placeholder.svg",
+        "tirinhas/placeholder.svg"
+      ],
+      "alt": "Humberto e Mick Jagger numa tarde ensolarada que não dura",
+      "hashtags": ["#humberto", "#mickjagger"]
     },
     {
       "id": 5,
@@ -42,8 +61,13 @@
       "data": "2026-03-10",
       "comentario": "Desenhei essa tirinha pensando naquelas perguntas que ficam na cabeça por dias.",
       "imagem": "tirinhas/placeholder.svg",
-      "alt": "Tirinha de exemplo com três painéis sobre uma questão filosófica",
-      "hashtags": ["#ze", "#vizinha", "#humor"]
+      "quadros": [
+        "tirinhas/placeholder.svg",
+        "tirinhas/placeholder.svg",
+        "tirinhas/placeholder.svg"
+      ],
+      "alt": "Humberto faz uma pergunta filosófica. Mick Jagger suspira",
+      "hashtags": ["#humberto", "#mickjagger", "#humor"]
     },
     {
       "id": 6,
@@ -51,50 +75,56 @@
       "data": "2026-03-12",
       "comentario": "",
       "imagem": "tirinhas/placeholder.svg",
-      "alt": "Tirinha mais recente",
-      "hashtags": ["#ze", "#tulipa"]
+      "quadros": [
+        "tirinhas/placeholder.svg",
+        "tirinhas/placeholder.svg",
+        "tirinhas/placeholder.svg",
+        "tirinhas/placeholder.svg"
+      ],
+      "alt": "A tirinha mais recente de Humberto Incerto",
+      "hashtags": ["#humberto", "#mickjagger"]
     }
   ],
   "personagens": [
     {
       "id": 1,
-      "nome": "Zé",
+      "nome": "Humberto",
       "apelido": "O Protagonista",
-      "descricao": "Homem comum, de bom coração e cabeça quente. Tem sempre uma ideia nova — e quase sempre a executa do jeito errado. No fundo, aprende com tudo.",
-      "caracteristicas": ["Otimista", "Atrapalhado", "Bem-intencionado", "Teimoso"],
+      "descricao": "Um garoto de cabelo caótico em espiral e meia listrada azul. Não sabe bem o que quer, mas vai atrás com convicção. Vive no limbo entre a melancolia e a esperança — e acha que os dois estados são a mesma coisa.",
+      "caracteristicas": ["Melancólico", "Curioso", "Teimoso", "Bem-intencionado"],
       "primeira_aparicao": 1,
       "imagem": "tirinhas/placeholder.svg",
-      "hashtag": "#ze"
+      "hashtag": "#humberto"
     },
     {
       "id": 2,
-      "nome": "A Vizinha",
-      "apelido": "A Voz da Razão",
-      "descricao": "Mora ao lado do Zé há décadas. Viu de tudo e já não se surpreende com nada. Sua sabedoria vem menos dos livros e mais das janelas que olhou durante anos.",
-      "caracteristicas": ["Sábia", "Direta", "Observadora", "Irônica"],
+      "nome": "Mick Jagger",
+      "apelido": "A Menina do Chapéu",
+      "descricao": "Menina rabugenta de chapéu empilhado que nunca pediu para ser personagem de ninguém. Tem opinião sobre tudo e paciência para nada. No fundo — bem no fundo — se importa.",
+      "caracteristicas": ["Rabugenta", "Direta", "Sarcástica", "Leal à contragosto"],
       "primeira_aparicao": 2,
       "imagem": "tirinhas/placeholder.svg",
-      "hashtag": "#vizinha"
+      "hashtag": "#mickjagger"
     },
     {
       "id": 3,
-      "nome": "O Chefe",
-      "apelido": "O Mandão Confuso",
-      "descricao": "Ocupa a cadeira de chefia há muito tempo, mas ninguém sabe bem como chegou lá. Faz reuniões longas, dá ordens contraditórias e acredita que está sempre certo.",
-      "caracteristicas": ["Autoritário", "Confuso", "Pomposo", "Inseguro"],
+      "nome": "O Velho",
+      "apelido": "O Que Sabe Mas Não Fala",
+      "descricao": "Aparece quando menos se espera. Nunca explica de onde vem. Suas frases parecem sem sentido até que, três dias depois, fazem todo o sentido do mundo.",
+      "caracteristicas": ["Enigmático", "Calmo", "Observador", "Pouco confiável"],
       "primeira_aparicao": 3,
       "imagem": "tirinhas/placeholder.svg",
-      "hashtag": "#chefe"
+      "hashtag": "#ovelho"
     },
     {
       "id": 4,
-      "nome": "Tulipa",
-      "apelido": "A Amiga Fiel",
-      "descricao": "Amiga de longa data do Zé. Prática e sem rodeios, tem o dom de resolver em dois minutos os problemas que Zé cria em horas. Coleciona soluções simples para problemas complicados.",
-      "caracteristicas": ["Prática", "Leal", "Perspicaz", "Impaciente"],
+      "nome": "A Mãe",
+      "apelido": "Presença Constante",
+      "descricao": "Aparece de costas, de longe, ou só como voz. Nunca sabemos muito sobre ela, mas ela sabe tudo sobre todos. Humm.",
+      "caracteristicas": ["Intuitiva", "Discreta", "Paciente", "Onisciente"],
       "primeira_aparicao": 4,
       "imagem": "tirinhas/placeholder.svg",
-      "hashtag": "#tulipa"
+      "hashtag": "#amae"
     }
   ]
 }
