@@ -99,14 +99,18 @@ function initScrollReveal() {
 }
 
 // ─────────────────────────────────────────────
-//  LIGHTBOX — CARROSSEL DE QUADROS
+//  LIGHTBOX — CARROSSEL DE QUADROS + NAVEGAÇÃO ENTRE TIRINHAS
 //  Suporta tirinha com múltiplos quadros (painéis)
-//  ou imagem única como fallback
+//  ou imagem única como fallback.
+//  Setas laterais permitem ir para a tirinha anterior/seguinte
+//  dentro do contexto em que o lightbox foi aberto.
 // ─────────────────────────────────────────────
 let _lightbox      = null;
 let _lbQuadros     = [];   // array de imagens/quadros da tirinha atual
 let _lbCurrentIdx  = 0;    // índice do quadro exibido
-let _lbTitle       = '';   // título da tirinha
+let _lbTitle       = '';   // título da tirinha atual
+let _lbStrips      = [];   // lista de tirinhas do contexto (ex: grid page)
+let _lbStripIdx    = 0;    // índice da tirinha atual na lista
 
 function createLightbox() {
   const el = document.createElement('div');
@@ -129,6 +133,8 @@ function createLightbox() {
       <p class="lightbox-title" id="lb-title"></p>
     </div>
     <button class="lightbox-close" id="lb-close" aria-label="Fechar">✕</button>
+    <button class="lightbox-strip-prev" id="lb-strip-prev" aria-label="Tirinha anterior" hidden>‹</button>
+    <button class="lightbox-strip-next" id="lb-strip-next" aria-label="Próxima tirinha" hidden>›</button>
     <p class="lightbox-caption">clique fora para fechar · esc · ← →</p>
   `;
 
@@ -142,6 +148,8 @@ function createLightbox() {
   el.querySelector('#lb-close').addEventListener('click', closeLightbox);
   el.querySelector('#lb-prev').addEventListener('click', () => showQuadro(_lbCurrentIdx - 1));
   el.querySelector('#lb-next').addEventListener('click', () => showQuadro(_lbCurrentIdx + 1));
+  el.querySelector('#lb-strip-prev').addEventListener('click', () => showStrip(_lbStripIdx - 1));
+  el.querySelector('#lb-strip-next').addEventListener('click', () => showStrip(_lbStripIdx + 1));
 
   // Navegação por teclado
   document.addEventListener('keydown', (e) => {
@@ -151,10 +159,42 @@ function createLightbox() {
     if (e.key === 'ArrowRight')  showQuadro(_lbCurrentIdx + 1);
   });
 
+  // Fechar deslizando para baixo no mobile
+  let _touchStartY = 0;
+  el.addEventListener('touchstart', (e) => {
+    _touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+  el.addEventListener('touchend', (e) => {
+    const dy = e.changedTouches[0].clientY - _touchStartY;
+    if (dy > 80) closeLightbox();
+  }, { passive: true });
+
   // Bloqueia menu de contexto dentro do lightbox
   el.addEventListener('contextmenu', (e) => e.preventDefault());
 
   return el;
+}
+
+// Navega para outra tirinha dentro do contexto atual
+function showStrip(idx) {
+  if (idx < 0 || idx >= _lbStrips.length) return;
+  _lbStripIdx = idx;
+  const tirinha = _lbStrips[idx];
+
+  _lbQuadros = (tirinha.quadros && tirinha.quadros.length > 0)
+    ? tirinha.quadros : [tirinha.imagem];
+  _lbTitle = tirinha.titulo;
+
+  const titleEl = document.getElementById('lb-title');
+  if (titleEl) titleEl.textContent = _lbTitle;
+
+  showQuadro(0);
+
+  // Atualiza estado das setas de tirinha
+  const spPrev = document.getElementById('lb-strip-prev');
+  const spNext = document.getElementById('lb-strip-next');
+  if (spPrev) spPrev.disabled = idx === 0;
+  if (spNext) spNext.disabled = idx === _lbStrips.length - 1;
 }
 
 // Exibe um quadro específico pelo índice
@@ -188,12 +228,18 @@ function showQuadro(idx) {
   if (next) next.disabled = idx === total - 1;
 }
 
-// Abre o lightbox com os quadros de uma tirinha
-function openLightbox(tirinha) {
+// Abre o lightbox com os quadros de uma tirinha.
+// strips: array de tirinhas do contexto (para navegação lateral)
+// stripIdx: posição da tirinha atual dentro de strips
+function openLightbox(tirinha, strips = [], stripIdx = 0) {
   if (!_lightbox) _lightbox = createLightbox();
 
+  // Contexto de navegação entre tirinhas
+  _lbStrips   = strips;
+  _lbStripIdx = stripIdx;
+
   // Define a lista de quadros — usa quadros[] se disponível, senão imagem única
-  _lbQuadros    = (tirinha.quadros && tirinha.quadros.length > 0)
+  _lbQuadros = (tirinha.quadros && tirinha.quadros.length > 0)
     ? tirinha.quadros
     : [tirinha.imagem];
   _lbTitle = tirinha.titulo;
@@ -202,6 +248,19 @@ function openLightbox(tirinha) {
   if (titleEl) titleEl.textContent = _lbTitle;
 
   showQuadro(0);
+
+  // Setas de navegação entre tirinhas: mostrar só se houver contexto
+  const spPrev = document.getElementById('lb-strip-prev');
+  const spNext = document.getElementById('lb-strip-next');
+  const hasCtx = strips.length > 1;
+  if (spPrev) {
+    spPrev.hidden   = !hasCtx;
+    spPrev.disabled = stripIdx === 0;
+  }
+  if (spNext) {
+    spNext.hidden   = !hasCtx;
+    spNext.disabled = stripIdx === strips.length - 1;
+  }
 
   _lightbox.classList.add('active');
   document.body.style.overflow = 'hidden';
@@ -261,7 +320,9 @@ function buildHero(tirinha, displayNum) {
 }
 
 // Constrói um card de tirinha para o grid
-function buildStripCard(tirinha, displayNum, isEager) {
+// strips: contexto de tirinhas para navegação no lightbox
+// stripIdx: índice desta tirinha dentro de strips
+function buildStripCard(tirinha, displayNum, isEager, strips = [], stripIdx = 0) {
   const card = document.createElement('article');
   card.className = 'strip-card reveal';
   card.setAttribute('role', 'button');
@@ -284,7 +345,7 @@ function buildStripCard(tirinha, displayNum, isEager) {
     </div>
   `;
 
-  const openAction = () => openLightbox(tirinha);
+  const openAction = () => openLightbox(tirinha, strips, stripIdx);
   card.addEventListener('click', openAction);
   card.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openAction(); }
@@ -325,7 +386,8 @@ function renderGridPage(page) {
       // displayNum: conta a partir do total, pulando o hero (índice 0)
       const globalIdx  = 1 + start + i;  // +1 porque o hero ocupa o índice 0
       const displayNum = total - globalIdx;
-      grid.appendChild(buildStripCard(tirinha, displayNum, false));
+      // Passa a slice atual como contexto para navegação lateral no lightbox
+      grid.appendChild(buildStripCard(tirinha, displayNum, false, slice, i));
     });
 
     grid.style.opacity   = '1';
@@ -451,7 +513,9 @@ async function initArchive() {
     if (counter) counter.textContent = `${total} tirinha${total !== 1 ? 's' : ''}`;
 
     // Constrói item da lista do arquivo
-    function buildArchiveItem(tirinha, displayNum) {
+    // strips: contexto de tirinhas para navegação lateral no lightbox
+    // stripIdx: posição desta tirinha dentro de strips
+    function buildArchiveItem(tirinha, displayNum, strips = [], stripIdx = 0) {
       const item = document.createElement('div');
       item.className = 'archive-item';
       item.setAttribute('role', 'button');
@@ -474,7 +538,7 @@ async function initArchive() {
         <div class="archive-item-num">#${String(displayNum).padStart(3, '0')}</div>
       `;
 
-      const openAction = () => openLightbox(tirinha);
+      const openAction = () => openLightbox(tirinha, strips, stripIdx);
       item.addEventListener('click', openAction);
       item.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openAction(); }
@@ -495,7 +559,8 @@ async function initArchive() {
       slice.forEach((tirinha, i) => {
         const globalIdx  = start + i;
         const displayNum = total - globalIdx;
-        list.appendChild(buildArchiveItem(tirinha, displayNum));
+        // Passa a slice atual como contexto para navegação lateral
+        list.appendChild(buildArchiveItem(tirinha, displayNum, slice, i));
       });
 
       if (pgInfo)  pgInfo.textContent = totalPages > 1 ? `Pág. ${page + 1} / ${totalPages}` : '';
@@ -521,10 +586,11 @@ async function initArchive() {
         return;
       }
 
-      results.forEach((tirinha) => {
+      results.forEach((tirinha, i) => {
         const globalIdx  = State.tirinhas.indexOf(tirinha);
         const displayNum = total - globalIdx;
-        list.appendChild(buildArchiveItem(tirinha, displayNum));
+        // Passa os resultados da busca como contexto para navegação lateral
+        list.appendChild(buildArchiveItem(tirinha, displayNum, results, i));
       });
 
       if (searchInfo) {
